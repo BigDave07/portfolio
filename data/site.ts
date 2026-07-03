@@ -1,32 +1,32 @@
 /**
  * Single source of truth for personal details.
- * Swap these placeholder values for your real content — nothing else needs to change.
+ * Update these as things change — nothing else needs to change.
  */
 export const site = {
-  name: "Daveed",
+  name: "David",
   /** Shown in the browser tab / metadata. */
-  fullName: "Daveed",
-  role: "Software Engineer",
+  fullName: "David Oladipupo",
+  role: "Computer Science Student",
   /** One-line positioning statement — the most important sentence on the site. */
   tagline:
-    "Software engineer shipping production AI — from full-stack apps to LLM agents and ML systems.",
-  location: "Remote",
-  /** Absolute URL of the deployed site (used for metadata / OG / sitemap). */
-  url: "https://daveed.dev",
+    "Computer science student building software and machine learning projects — open to SWE/ML internships.",
+  location: "Regina, SK, Canada",
+  /** Absolute URL of the deployed site (used for metadata / OG / sitemap). Update when you deploy. */
+  url: "https://davidoladipupo.dev",
   email: "daveed3k3k@gmail.com",
-  /** Path to your resume in /public. Replace public/resume.pdf with the real file. */
+  /** Path to your resume in /public. Add public/resume.pdf when ready. */
   resume: "/resume.pdf",
 
   /** 2–3 sentence bio for the About section. */
   bio: [
-    "I'm a software engineer who ships end-to-end: full-stack products on one side, LLM agents and ML systems on the other. I care about the boring parts that make software feel fast and trustworthy.",
-    "Most of my recent work lives at the seam between application code and AI — turning models into reliable, measurable product features rather than demos.",
+    "I'm a computer science student at the University of Regina with strong interests in AI, machine learning, and software development. Recent IBM certifications in Python for Data Science, SQL, and Machine Learning reflect a focus on practical, data-driven skill-building.",
+    "As a software intern at RCCG Mount Zion Parish, I built and maintain a responsive community website with a focus on clean, user-friendly design. I'm currently open to SWE/ML internships and collaborations.",
   ],
 
   links: {
+    // TODO: add your real GitHub handle.
     github: "https://github.com/your-handle",
-    linkedin: "https://linkedin.com/in/your-handle",
-    x: "https://x.com/your-handle",
+    linkedin: "https://www.linkedin.com/in/david-oladipupo-088668326/",
     email: "mailto:daveed3k3k@gmail.com",
   },
 } as const;
@@ -35,6 +35,5 @@ export const site = {
 export const socials = [
   { label: "GitHub", href: site.links.github },
   { label: "LinkedIn", href: site.links.linkedin },
-  { label: "X", href: site.links.x },
   { label: "Email", href: site.links.email },
 ] as const;

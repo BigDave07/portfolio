@@ -34,7 +34,7 @@ export default function Home() {
         </Reveal>
       </Section>
 
-      <Section id="about" eyebrow="02 — About" title="Software depth, AI focus">
+      <Section id="about" eyebrow="02 — About" title="Studying CS, building with AI">
         <div className="max-w-2xl space-y-5 text-lg leading-8 text-[var(--color-muted)] text-pretty">
           {site.bio.map((para) => (
             <Reveal key={para.slice(0, 24)}>

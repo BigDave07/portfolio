@@ -2,22 +2,34 @@
 export const skillGroups: { title: string; items: string[] }[] = [
   {
     title: "Languages",
-    items: ["TypeScript", "Python", "Go", "SQL"],
+    items: ["Python", "SQL", "JavaScript", "HTML / CSS"],
   },
   {
-    title: "Frontend",
-    items: ["React", "Next.js", "Tailwind CSS", "Framer Motion"],
+    title: "Machine Learning",
+    items: [
+      "Machine Learning",
+      "Deep Learning",
+      "Reinforcement Learning",
+      "Unsupervised Learning",
+      "Exploratory Data Analysis",
+    ],
   },
   {
-    title: "Backend",
-    items: ["Node.js", "FastAPI", "PostgreSQL", "Redis"],
+    title: "Data & Tools",
+    items: ["pandas", "NumPy", "scikit-learn", "Jupyter", "Data Analytics"],
   },
   {
-    title: "AI / ML",
-    items: ["LLM agents", "RAG", "PyTorch", "Evals & fine-tuning", "Vector search"],
+    title: "Web",
+    items: ["Responsive Web Design", "Git & GitHub"],
   },
   {
-    title: "Infra",
-    items: ["Docker", "AWS", "Vercel", "CI/CD", "Observability"],
+    title: "Certifications (IBM)",
+    items: [
+      "Python for Data Science",
+      "SQL",
+      "Machine Learning",
+      "Deep Learning & Reinforcement Learning",
+      "Unsupervised Machine Learning",
+    ],
   },
 ];
