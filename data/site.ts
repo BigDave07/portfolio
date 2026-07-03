@@ -24,8 +24,7 @@ export const site = {
   ],
 
   links: {
-    // TODO: add your real GitHub handle.
-    github: "https://github.com/your-handle",
+    github: "https://github.com/BigDave07",
     linkedin: "https://www.linkedin.com/in/david-oladipupo-088668326/",
     email: "mailto:daveed3k3k@gmail.com",
   },
