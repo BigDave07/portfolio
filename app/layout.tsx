@@ -22,12 +22,12 @@ const newsreader = Newsreader({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.fullName} — ${site.role}`,
-    template: `%s — ${site.fullName}`,
+    default: `${site.fullName} - ${site.role}`,
+    template: `%s - ${site.fullName}`,
   },
   description: site.tagline,
   openGraph: {
-    title: `${site.fullName} — ${site.role}`,
+    title: `${site.fullName} - ${site.role}`,
     description: site.tagline,
     url: site.url,
     siteName: site.fullName,
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${site.fullName} — ${site.role}`,
+    title: `${site.fullName} - ${site.role}`,
     description: site.tagline,
   },
 };

@@ -4,39 +4,45 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
-  Design tokens — "dark editorial / AI-precision".
-  One restrained accent, generous whitespace, high-contrast editorial type.
+  Design tokens - dark editorial / kinetic.
+  One restrained accent (warm amber), generous whitespace, high-contrast editorial type.
+  Easing curves come from Emil Kowalski's design-engineering rules (stronger than CSS defaults).
 */
 @theme {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
 
   /* Neutrals (light mode fallback) */
-  --color-bg: #f7f6f3;
+  --color-bg: #f6f5f2;
   --color-surface: #ffffff;
-  --color-border: #e5e2dc;
-  --color-fg: #16150f;
-  --color-muted: #6b6860;
-  --color-faint: #9a968c;
+  --color-border: #e4e1da;
+  --color-fg: #14130f;
+  --color-muted: #605d55;
+  --color-faint: #96928a;
 
-  /* Accent — warm amber, used sparingly */
-  --color-accent: #d97706;
-  --color-accent-soft: #f59e0b;
+  /* Accent - warm amber, used sparingly and consistently */
+  --color-accent: #d98a1f;
+  --color-accent-soft: #f0a83a;
 
-  --radius-card: 0.9rem;
+  --radius-card: 1rem;
+
+  /* Emil's stronger easing curves */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-/* Dark palette (default theme). */
+/* Dark palette (default theme). No pure black - off-black keeps depth. */
 :root,
 .dark {
-  --color-bg: #0a0a0b;
-  --color-surface: #101012;
-  --color-border: #23232a;
-  --color-fg: #ededed;
-  --color-muted: #a0a0ab;
-  --color-faint: #6b6b76;
-  --color-accent: #f5b544;
-  --color-accent-soft: #fbd38d;
+  --color-bg: #0b0b0d;
+  --color-surface: #131316;
+  --color-border: #26262d;
+  --color-fg: #f0efec;
+  --color-muted: #a3a1ab;
+  --color-faint: #6a6a76;
+  --color-accent: #f5b13c;
+  --color-accent-soft: #fbcf82;
 }
 
 @layer base {
@@ -54,11 +60,12 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    overflow-x: hidden;
   }
 
   ::selection {
     background-color: var(--color-accent);
-    color: #0a0a0b;
+    color: #0b0b0d;
   }
 
   a {
@@ -69,17 +76,17 @@
   :focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 3px;
-    border-radius: 2px;
+    border-radius: 3px;
   }
 
-  /* Subtle film-grain / depth on the page background. */
-  body::before {
+  /* Fixed grain overlay (pointer-events-none, never on a scroll container). */
+  body::after {
     content: "";
     position: fixed;
     inset: 0;
-    z-index: -1;
+    z-index: 1;
     pointer-events: none;
-    opacity: 0.025;
+    opacity: 0.02;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
@@ -97,7 +104,6 @@
   }
 }
 
-/* Utility helpers used across components. */
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -107,8 +113,136 @@
   }
   .container-page {
     width: 100%;
-    max-width: 68rem;
+    max-width: 72rem;
     margin-inline: auto;
     padding-inline: 1.5rem;
+  }
+
+  /* Pressable feedback (Emil): instant scale on :active. Hover gated to fine pointers. */
+  .pressable {
+    transition:
+      transform 160ms var(--ease-out),
+      border-color 200ms ease,
+      color 200ms ease,
+      background-color 200ms ease;
+  }
+  .pressable:active {
+    transform: scale(0.97);
+  }
+
+  /* CSS entrance animations (run without JS, screenshot-safe, reduced-motion-safe).
+     `both` fill holds the hidden from-state during the delay and the final state after. */
+  .rise {
+    animation: rise-in 0.62s var(--ease-out) both;
+    animation-delay: var(--d, 0ms);
+  }
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .line-reveal {
+    display: block;
+    animation: line-rise 0.72s var(--ease-out) both;
+    animation-delay: var(--d, 0ms);
+  }
+  @keyframes line-rise {
+    from {
+      transform: translateY(110%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  /* Scroll-driven reveal (CSS view timeline). No JS, no scroll listeners.
+     Browsers without view-timeline support run it once on load (still ends visible).
+     Reduced motion collapses it to the final state via the global override. */
+  .reveal {
+    animation: rise-in 0.7s var(--ease-out) both;
+    animation-timeline: view();
+    animation-range: entry 4% cover 30%;
+  }
+
+  /* Animated aurora backdrop for the hero. Amber-tinted, not AI-purple. */
+  .hero-aurora {
+    position: absolute;
+    inset: -20% -10% auto -10%;
+    height: 70%;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(40% 55% at 22% 18%, color-mix(in oklab, var(--color-accent) 22%, transparent), transparent 70%),
+      radial-gradient(38% 50% at 78% 8%, color-mix(in oklab, var(--color-accent-soft) 14%, transparent), transparent 70%);
+    filter: blur(30px);
+    opacity: 0.9;
+    animation: aurora 16s ease-in-out infinite alternate;
+  }
+  @keyframes aurora {
+    0% {
+      transform: translate3d(-3%, -2%, 0) scale(1);
+    }
+    100% {
+      transform: translate3d(4%, 3%, 0) scale(1.12);
+    }
+  }
+
+  /* Faint dotted grid, masked to fade out. Organizes the hero space. */
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: radial-gradient(var(--color-border) 1px, transparent 1px);
+    background-size: 34px 34px;
+    -webkit-mask-image: radial-gradient(70% 60% at 30% 30%, #000 0%, transparent 75%);
+    mask-image: radial-gradient(70% 60% at 30% 30%, #000 0%, transparent 75%);
+    opacity: 0.5;
+  }
+
+  /* Kinetic marquee. Constant motion => linear (Emil). Pauses under reduced motion. */
+  .marquee-track {
+    display: inline-flex;
+    width: max-content;
+    animation: marquee 34s linear infinite;
+  }
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+      animation: none;
+    }
+    .hero-aurora {
+      animation: none;
+    }
+  }
+
+  /* Spotlight that follows the cursor on cards (position set via CSS vars in JS). */
+  .card-spotlight::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 300ms ease;
+    background: radial-gradient(
+      340px circle at var(--mx, 50%) var(--my, 50%),
+      color-mix(in oklab, var(--color-accent) 16%, transparent),
+      transparent 60%
+    );
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .card-spotlight:hover::before {
+      opacity: 1;
+    }
   }
 }

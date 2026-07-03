@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { site } from "@/data/site";
 
 export const runtime = "edge";
-export const alt = `${site.fullName} — ${site.role}`;
+export const alt = `${site.fullName} - ${site.role}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { site } from "@/data/site";
+import { NavLink } from "@/components/NavLink";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const items = [
@@ -10,7 +11,7 @@ const items = [
 
 export function Nav() {
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--color-border)] bg-[var(--color-bg)]/80 backdrop-blur-md">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-[var(--color-border)]/60 bg-[var(--color-bg)]/70 backdrop-blur-xl">
       <nav className="container-page flex h-16 items-center justify-between">
         <Link
           href="/"
@@ -21,15 +22,10 @@ export function Nav() {
         </Link>
 
         <div className="flex items-center gap-6">
-          <ul className="hidden items-center gap-6 text-sm text-[var(--color-muted)] sm:flex">
+          <ul className="hidden items-center gap-6 sm:flex">
             {items.map((item) => (
               <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className="transition-colors hover:text-[var(--color-fg)]"
-                >
-                  {item.label}
-                </Link>
+                <NavLink href={item.href} label={item.label} />
               </li>
             ))}
           </ul>

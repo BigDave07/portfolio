@@ -3,7 +3,7 @@ import { Reveal } from "@/components/motion/Reveal";
 
 type SectionProps = {
   id?: string;
-  /** Small eyebrow label above the heading, e.g. "01 — Selected work". */
+  /** Optional small eyebrow label above the heading. Use sparingly (max 1 per 3 sections). */
   eyebrow?: string;
   title?: string;
   children: ReactNode;

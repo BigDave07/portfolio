@@ -1,43 +1,26 @@
-"use client";
-
-import { motion, useReducedMotion } from "motion/react";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 type RevealProps = {
   children: ReactNode;
-  /** Stagger delay in seconds. */
+  /** Small extra delay (ms-ish, expressed as a fraction of a second). */
   delay?: number;
   className?: string;
   as?: "div" | "li" | "section" | "article";
 };
 
 /**
- * Fade + rise as the element enters the viewport.
- * Enter animations use ease-out and stay under ~450ms (per emil-design-eng rules).
- * Fully disabled when the user prefers reduced motion.
+ * Fade + rise as the element scrolls into view, using a CSS view() timeline.
+ * No JS and no scroll listeners: robust without hydration and screenshot-safe.
+ * Reduced motion and unsupported browsers both resolve to the final visible state.
  */
 export function Reveal({ children, delay = 0, className, as = "div" }: RevealProps) {
-  const reduce = useReducedMotion();
-  const MotionTag = motion[as];
-
-  if (reduce) {
-    const Tag = as;
-    return <Tag className={className}>{children}</Tag>;
-  }
-
+  const Tag = as;
   return (
-    <MotionTag
-      className={className}
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{
-        duration: 0.45,
-        delay,
-        ease: [0.22, 1, 0.36, 1], // custom ease-out, not the CSS default
-      }}
+    <Tag
+      className={`reveal ${className ?? ""}`}
+      style={delay ? ({ animationDelay: `${delay}s` } as CSSProperties) : undefined}
     >
       {children}
-    </MotionTag>
+    </Tag>
   );
 }
