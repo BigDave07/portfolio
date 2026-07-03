@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { site } from "@/data/site";
+import { Logo } from "@/components/Logo";
 import { NavLink } from "@/components/NavLink";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -15,10 +16,14 @@ export function Nav() {
       <nav className="container-page flex h-16 items-center justify-between">
         <Link
           href="/"
-          className="font-serif text-lg tracking-tight text-[var(--color-fg)] transition-opacity hover:opacity-70"
+          aria-label={`${site.fullName}, home`}
+          className="group flex items-center gap-2.5 transition-opacity hover:opacity-80"
         >
-          {site.name}
-          <span className="text-[var(--color-accent)]">.</span>
+          <Logo className="h-6 w-auto text-[var(--color-fg)]" />
+          <span className="font-serif text-lg tracking-tight text-[var(--color-fg)]">
+            {site.name}
+            <span className="text-[var(--color-accent)]">.</span>
+          </span>
         </Link>
 
         <div className="flex items-center gap-6">
