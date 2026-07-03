@@ -1,0 +1,25 @@
+---
+title: Notes on Hybrid Retrieval
+summary: Why neither keyword nor vector search wins alone, and how to fuse them without wrecking your latency budget.
+date: "2025-09-03"
+---
+
+Pure vector search is seductive and slightly wrong. It finds documents that are *about*
+the same thing, then buries the exact answer the user typed. Keyword search has the
+opposite failure. The fix is not to pick a side.
+
+## Fuse candidates, then rerank
+
+Generate candidates from both a lexical retriever (BM25) and a dense retriever, fuse them
+with reciprocal-rank fusion, then let a cross-encoder reranker make the final call on the
+top slice. Each stage covers the previous stage's blind spot.
+
+## Watch the tail, not the mean
+
+Rerankers are where latency goes to die. Batch inference, cap the rerank window, and cache
+aggressively on the hot path. Optimize p95, because that's what users feel.
+
+## Measure with your own eval set
+
+Public benchmarks won't match your data. Build a small, honest eval set from real queries
+and track nDCG@10 on every change. If the number doesn't move, neither should the code.

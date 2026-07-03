@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+/* Dark by default; the `dark` class is toggled by next-themes on <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+  Design tokens — "dark editorial / AI-precision".
+  One restrained accent, generous whitespace, high-contrast editorial type.
+*/
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
+
+  /* Neutrals (light mode fallback) */
+  --color-bg: #f7f6f3;
+  --color-surface: #ffffff;
+  --color-border: #e5e2dc;
+  --color-fg: #16150f;
+  --color-muted: #6b6860;
+  --color-faint: #9a968c;
+
+  /* Accent — warm amber, used sparingly */
+  --color-accent: #d97706;
+  --color-accent-soft: #f59e0b;
+
+  --radius-card: 0.9rem;
+}
+
+/* Dark palette (default theme). */
+:root,
+.dark {
+  --color-bg: #0a0a0b;
+  --color-surface: #101012;
+  --color-border: #23232a;
+  --color-fg: #ededed;
+  --color-muted: #a0a0ab;
+  --color-faint: #6b6b76;
+  --color-accent: #f5b544;
+  --color-accent-soft: #fbd38d;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: #0a0a0b;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Subtle film-grain / depth on the page background. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Utility helpers used across components. */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+  .container-page {
+    width: 100%;
+    max-width: 68rem;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+}

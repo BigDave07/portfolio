@@ -1,0 +1,35 @@
+---
+title: Agent Runtime
+summary: A production runtime for LLM agents with deterministic tool-calling, retries, and full-trace observability.
+category: AI/ML
+metric: Cut agent task failure rate from 23% → 4%
+stack: [TypeScript, Node.js, PostgreSQL, OpenTelemetry, LLM tools]
+year: "2025"
+live: https://example.com
+repo: https://github.com/your-handle/agent-runtime
+order: 1
+featured: true
+---
+
+## The problem
+
+Agent demos are easy; agents you can page on at 3am are not. The first version of our
+agent looped, silently dropped tool errors, and gave different answers to the same input.
+Nobody trusted it enough to put it in the critical path.
+
+## What I built
+
+A runtime that treats an agent like any other production service:
+
+- **Deterministic tool-calling** — a typed tool registry with schema validation, so a
+  malformed model call fails loudly instead of corrupting state.
+- **Bounded retries + circuit breaking** — every step has a budget; runaway loops are
+  killed and surfaced, not hidden.
+- **Full-trace observability** — each run emits an OpenTelemetry trace: prompt, tool
+  calls, tokens, latency, and cost, replayable end-to-end.
+
+## Outcome
+
+Over ~40k production runs, task failure rate dropped from **23% to 4%**, and mean
+time-to-diagnose a bad run went from "read the logs and guess" to a single trace link.
+The agent finally moved into the critical path.

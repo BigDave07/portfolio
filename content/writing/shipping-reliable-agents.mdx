@@ -1,0 +1,28 @@
+---
+title: Shipping Reliable LLM Agents
+summary: The engineering practices that turn a flaky agent demo into a service you can actually put in the critical path.
+date: "2025-11-12"
+---
+
+Most agent demos fall apart the moment they meet real traffic. The gap between "it worked
+in the notebook" and "it's on the critical path" is almost entirely engineering, not
+prompting.
+
+## Treat the agent like a service
+
+An agent is a distributed system with a probabilistic core. That means the usual
+production disciplines still apply — budgets, retries, circuit breakers, and traces — plus
+a few that are specific to models.
+
+## Make tool calls fail loudly
+
+The single biggest reliability win is refusing to accept a malformed tool call. Validate
+every call against a schema and error out immediately. Silent coercion is how agents
+corrupt state.
+
+## Instrument everything
+
+If you can't replay a bad run from a single trace — prompt, tool calls, tokens, latency,
+cost — you're debugging blind. Observability is not optional here; it's the product.
+
+> Reliability is a feature. Ship it like one.
