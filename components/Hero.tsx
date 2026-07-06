@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import { GithubLogo, LinkedinLogo, EnvelopeSimple, ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { AnimatedHeading } from "@/components/motion/AnimatedHeading";
 import { MagneticButton } from "@/components/motion/MagneticButton";
+import { ProfilePhoto } from "@/components/ProfilePhoto";
 import { site, socials } from "@/data/site";
 
 const icons = { GitHub: GithubLogo, LinkedIn: LinkedinLogo, Email: EnvelopeSimple } as const;
@@ -13,7 +14,8 @@ export function Hero() {
       <div className="hero-grid" />
       <div className="hero-aurora" />
 
-      <div className="container-page relative z-10">
+      <div className="container-page relative z-10 grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8">
+        <div className="lg:col-span-7">
         <p
           style={d(0)}
           className="rise mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)]/50 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--color-accent)] backdrop-blur"
@@ -28,7 +30,7 @@ export function Hero() {
         <AnimatedHeading
           lines={site.hero.headline}
           delay={120}
-          className="max-w-4xl font-serif text-5xl font-light leading-[1.02] tracking-tight text-[var(--color-fg)] sm:text-6xl lg:text-7xl"
+          className="font-serif text-5xl font-light leading-[1.03] tracking-tight text-[var(--color-fg)] sm:text-6xl"
         />
 
         <p
@@ -66,6 +68,11 @@ export function Hero() {
             );
           })}
         </ul>
+        </div>
+
+        <div className="order-first lg:order-last lg:col-span-5">
+          <ProfilePhoto />
+        </div>
       </div>
     </section>
   );

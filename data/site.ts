@@ -14,7 +14,7 @@ export const site = {
   /** Hero content. headline renders 2 lines with a kinetic reveal; keep it 2 lines at desktop. */
   hero: {
     eyebrow: "Open to SWE / ML internships",
-    headline: ["I build software and", "machine learning projects."],
+    headline: ["Hi, I'm David.", "I build software & ML."],
     subtext:
       "Computer science student at the University of Regina, focused on AI, ML, and shipping real work.",
   },

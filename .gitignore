@@ -34,3 +34,7 @@ next-env.d.ts
 /.agents/
 /.claude/
 /skills-lock.json
+
+# unused/private photo (keep out of public repo)
+/public/David02.jpeg
+/public/david.jpg
