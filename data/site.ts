@@ -35,7 +35,7 @@ export const site = {
   /** Writing section (nav, sitemap, /writing routes). Off until there are new posts. */
   showWriting: false,
   /** Absolute URL of the deployed site (used for metadata / OG / sitemap). Update when you deploy. */
-  url: "https://davidoladipupo.dev",
+  url: "https://oladipupo.dev",
   email: "daveed3k3k@gmail.com",
   /** Path to your resume in /public. Add public/resume.pdf when ready. */
   resume: "/resume.pdf",

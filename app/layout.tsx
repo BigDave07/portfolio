@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
+import { Analytics } from "@vercel/analytics/next";
 import { ChatAgent } from "@/components/ChatAgent";
 import { site } from "@/data/site";
 
@@ -65,6 +66,7 @@ export default function RootLayout({
           <Footer />
           <Nav />
           <ChatAgent />
+          <Analytics />
         </ThemeProvider>
       </body>
     </html>

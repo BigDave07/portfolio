@@ -12,6 +12,7 @@
     "@ai-sdk/anthropic": "^4.0.79",
     "@ai-sdk/react": "^4.0.134",
     "@phosphor-icons/react": "^2.1.10",
+    "@vercel/analytics": "^2.0.1",
     "ai": "^7.0.131",
     "gray-matter": "^4.0.3",
     "motion": "^11.15.0",
