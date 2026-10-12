@@ -38,3 +38,10 @@ next-env.d.ts
 # unused/private photo (keep out of public repo)
 /public/David02.jpeg
 /public/david.jpg
+
+# browser test artifacts
+.playwright-mcp/
+
+# local screen recordings
+*.mov
+.env*

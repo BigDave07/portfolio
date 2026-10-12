@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { Hero } from "@/components/Hero";
 import { Section } from "@/components/Section";
-import { ProjectCard } from "@/components/ProjectCard";
+import { ProjectList } from "@/components/ProjectList";
 import { SkillGroup } from "@/components/SkillGroup";
 import { Marquee } from "@/components/Marquee";
 import { Reveal } from "@/components/motion/Reveal";
@@ -19,14 +19,8 @@ export default function Home() {
 
       <Marquee items={marqueeItems} />
 
-      <Section id="work" title="Selected work">
-        <div className="grid gap-6 md:grid-cols-2">
-          {projects.map((project, i) => (
-            <Reveal key={project.slug} delay={i * 0.06} className="h-full">
-              <ProjectCard project={project} />
-            </Reveal>
-          ))}
-        </div>
+      <Section id="work" index="02" eyebrow="Projects.dir" title="Selected work">
+        <ProjectList projects={projects} />
         <Reveal className="mt-10">
           <Link
             href="/work"
@@ -41,17 +35,26 @@ export default function Home() {
         </Reveal>
       </Section>
 
-      <Section id="about" title="Studying CS, building with AI">
+      <Section id="about" index="03" eyebrow="About.log" title="Building AI products, end to end">
         <div className="max-w-2xl space-y-5 text-lg leading-8 text-[var(--color-muted)] text-pretty">
           {site.bio.map((para) => (
             <Reveal key={para.slice(0, 24)}>
               <p>{para}</p>
             </Reveal>
           ))}
+          <Reveal>
+            <Link
+              href="/about"
+              className="group inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-accent)]"
+            >
+              More about me
+              <ArrowRight weight="bold" className="size-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          </Reveal>
         </div>
       </Section>
 
-      <Section id="skills" title="What I work with">
+      <Section id="skills" index="04" eyebrow="Stack.sys" title="What I work with">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {skillGroups.map((group, i) => (
             <Reveal key={group.title} delay={i * 0.05}>

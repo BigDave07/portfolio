@@ -4,7 +4,7 @@ import { site } from "@/data/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = site.url.replace(/\/$/, "");
-  const staticRoutes = ["", "/work", "/writing"].map((route) => ({
+  const staticRoutes = ["", "/work", "/about", ...(site.showWriting ? ["/writing"] : [])].map((route) => ({
     url: `${base}${route}`,
     lastModified: new Date(),
   }));
@@ -14,7 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: new Date(),
   }));
 
-  const postRoutes = getPosts().map((p) => ({
+  const postRoutes = (site.showWriting ? getPosts() : []).map((p) => ({
     url: `${base}/writing/${p.slug}`,
     lastModified: p.date ? new Date(p.date) : new Date(),
   }));

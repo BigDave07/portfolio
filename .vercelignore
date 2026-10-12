@@ -1,0 +1,7 @@
+# Local-only assets: raw screen recordings used to make the hover previews
+*.mov
+Synvora screenrecord/
+.playwright-mcp/
+.next/
+.claude/
+.agents/
