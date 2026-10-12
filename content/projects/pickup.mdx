@@ -1,0 +1,31 @@
+---
+title: "Pickup: AI voice intake agent"
+summary: Multi-tenant AI receptionist that answers, qualifies and books inbound calls for law firms and local service businesses.
+category: AI / Voice
+metric: Validated through 30+ customer discovery calls
+stack: [Claude API, Twilio, Supabase, Next.js, Vercel, Google Cloud]
+year: "2026"
+live: https://trypickup.dev
+order: 2
+preview: /projects/pickup.mp4
+poster: /projects/pickup.jpg
+featured: true
+---
+
+## The problem
+
+I ran 30+ customer discovery calls with businesses in Regina, Saskatoon, Winnipeg,
+Calgary and Edmonton. One failure kept coming up: leads from paid search die at
+phone intake, because nobody answers or follows up in time. Two law firms confirmed
+it independently.
+
+## What I built
+
+- A working voice agent demo that qualifies inbound callers and books consultations straight into the firm's calendar, deployed on Vercel with Google Cloud telephony.
+- A missed-call recovery MVP on Twilio, the Claude API, Supabase and a Next.js dashboard.
+
+## Where it's going
+
+After benchmarking against Vapi and Retell AI, I moved Pickup from per-client builds
+to a multi-tenant, self-serve platform. I also run the outreach and handle technical
+pre-sales conversations with non-technical business owners.

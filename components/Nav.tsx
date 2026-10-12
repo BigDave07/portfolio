@@ -1,42 +1,94 @@
+"use client";
+
 import Link from "next/link";
-import { site } from "@/data/site";
-import { Logo } from "@/components/Logo";
-import { NavLink } from "@/components/NavLink";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { site, socials } from "@/data/site";
 
 const items = [
   { label: "Work", href: "/work" },
-  { label: "Writing", href: "/writing" },
-  { label: "About", href: "/#about" },
+  ...(site.showWriting ? [{ label: "Writing", href: "/writing" }] : []),
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/#contact" },
 ];
 
+/** Slim top bar: monogram + model tag on the left, numbered links on the right, sheet menu on mobile. */
 export function Nav() {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    addEventListener("keydown", onKey);
+    return () => removeEventListener("keydown", onKey);
+  }, [open]);
+
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-[var(--color-border)]/60 bg-[var(--color-bg)]/70 backdrop-blur-xl">
-      <nav className="container-page flex h-16 items-center justify-between">
-        <Link
-          href="/"
-          aria-label={`${site.fullName}, home`}
-          className="group flex items-center gap-2.5 transition-opacity hover:opacity-80"
-        >
-          <Logo className="h-6 w-auto text-[var(--color-fg)]" />
-          <span className="font-serif text-lg tracking-tight text-[var(--color-fg)]">
-            {site.name}
-            <span className="text-[var(--color-accent)]">.</span>
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-[var(--color-border)]/50 bg-[var(--color-bg)]/70 backdrop-blur-md">
+      <nav aria-label="Main" className="mx-auto flex max-w-[90rem] items-center justify-between px-5 py-5 font-mono text-xs sm:px-8">
+        <Link href="/" className="group flex items-center gap-3" aria-label={`${site.fullName}, home`}>
+          <span className="grid size-8 place-items-center rounded-full border border-[var(--color-border)] font-serif text-base italic text-[var(--color-fg)] transition-colors group-hover:border-[var(--color-accent)]">
+            d
+          </span>
+          <span className="hidden text-[var(--color-muted)] sm:inline">
+            {site.fullName.toLowerCase()} <span className="text-[var(--color-faint)]">/ software engineer</span>
           </span>
         </Link>
 
-        <div className="flex items-center gap-6">
-          <ul className="hidden items-center gap-6 sm:flex">
-            {items.map((item) => (
+        <ul className="hidden items-center gap-7 sm:flex">
+          {items.map((item, i) => {
+            const active = item.href !== "/" && !item.href.includes("#") && pathname.startsWith(item.href);
+            return (
               <li key={item.href}>
-                <NavLink href={item.href} label={item.label} />
+                <Link
+                  href={item.href}
+                  aria-current={active ? "page" : undefined}
+                  className={`group inline-flex items-baseline gap-1.5 uppercase tracking-[0.18em] transition-colors ${
+                    active ? "text-[var(--color-fg)]" : "text-[var(--color-muted)] hover:text-[var(--color-fg)]"
+                  }`}
+                >
+                  <span className={active ? "text-[var(--color-accent)]" : "text-[var(--color-faint)]"}>0{i + 1}</span>
+                  {item.label}
+                </Link>
               </li>
-            ))}
-          </ul>
-          <ThemeToggle />
-        </div>
+            );
+          })}
+        </ul>
+
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-controls="nav-sheet"
+          onClick={() => setOpen((o) => !o)}
+          className="pressable rounded-full border border-[var(--color-border)] px-4 py-2 uppercase tracking-[0.18em] text-[var(--color-fg)] sm:hidden"
+        >
+          {open ? "Close" : "Menu"}
+        </button>
       </nav>
+
+      <div id="nav-sheet" hidden={!open} className="glass mx-5 rounded-2xl p-5 sm:hidden">
+        <ul className="space-y-1">
+          {items.map((item, i) => (
+            <li key={item.href}>
+              <Link href={item.href} onClick={() => setOpen(false)} className="flex items-baseline gap-3 py-1.5">
+                <span className="font-mono text-xs text-[var(--color-faint)]">0{i + 1}</span>
+                <span className="font-serif text-3xl text-[var(--color-fg)]">{item.label}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <ul className="mt-4 flex flex-wrap gap-4 border-t border-[var(--color-border)] pt-4 font-mono text-xs text-[var(--color-faint)]">
+          {socials.map((s) => (
+            <li key={s.label}>
+              <a href={s.href} target={s.external ? "_blank" : undefined} rel={s.external ? "noreferrer" : undefined}>
+                {s.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
     </header>
   );
 }

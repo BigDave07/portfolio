@@ -1,35 +1,38 @@
-/** Grouped, honest skill list. Keep each group tight. */
+/** Grouped, honest skill list (from the resume). Keep each group tight. */
 export const skillGroups: { title: string; items: string[] }[] = [
   {
     title: "Languages",
-    items: ["Python", "SQL", "JavaScript", "HTML / CSS"],
+    items: ["Python", "TypeScript", "JavaScript", "C++", "SQL", "HTML / CSS"],
   },
   {
-    title: "Machine Learning",
+    title: "AI / LLM",
     items: [
-      "Machine Learning",
-      "Deep Learning",
-      "Reinforcement Learning",
-      "Unsupervised Learning",
-      "Exploratory Data Analysis",
+      "Claude API",
+      "Gemini",
+      "Prompt engineering",
+      "Structured outputs",
+      "Tool calling",
+      "Agent orchestration",
+      "Vision-language models",
+      "RAG",
+      "Evaluation sets",
+      "MCP",
     ],
   },
   {
-    title: "Data & Tools",
-    items: ["pandas", "NumPy", "scikit-learn", "Jupyter", "Data Analytics"],
+    title: "Backend & Data",
+    items: ["Supabase (Postgres, Edge Functions, Auth)", "FastAPI", "Twilio", "REST APIs", "PostHog"],
   },
   {
-    title: "Web",
-    items: ["Responsive Web Design", "Git & GitHub"],
+    title: "Frontend & Mobile",
+    items: ["Next.js", "React Native (Expo, Expo Router)", "Tailwind", "NativeWind", "Framer Motion"],
   },
   {
-    title: "Certifications (IBM)",
-    items: [
-      "Python for Data Science",
-      "SQL",
-      "Machine Learning",
-      "Deep Learning & Reinforcement Learning",
-      "Unsupervised Machine Learning",
-    ],
+    title: "ML",
+    items: ["PyTorch / TensorFlow fundamentals", "scikit-learn", "pandas", "NumPy", "YOLOv8", "Tableau", "Power BI"],
+  },
+  {
+    title: "Tooling",
+    items: ["Git / GitHub", "Claude Code", "Vercel", "Google Cloud", "RevenueCat", "TestFlight"],
   },
 ];

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Inter, Newsreader } from "next/font/google";
+import { Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
+import { ChatAgent } from "@/components/ChatAgent";
 import { site } from "@/data/site";
 
 const inter = Inter({
@@ -12,11 +13,18 @@ const inter = Inter({
   display: "swap",
 });
 
-const newsreader = Newsreader({
+const display = Instrument_Serif({
   subsets: ["latin"],
-  variable: "--font-newsreader",
-  display: "swap",
+  weight: "400",
   style: ["normal", "italic"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -44,7 +52,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${newsreader.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${display.variable} ${mono.variable}`}>
       <body className="min-h-dvh antialiased">
         <ThemeProvider>
           <a
@@ -53,9 +61,10 @@ export default function RootLayout({
           >
             Skip to content
           </a>
-          <Nav />
           <main id="main">{children}</main>
           <Footer />
+          <Nav />
+          <ChatAgent />
         </ThemeProvider>
       </body>
     </html>

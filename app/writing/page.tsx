@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Reveal } from "@/components/motion/Reveal";
+import { notFound } from "next/navigation";
 import { getPosts, formatDate } from "@/lib/content";
+import { site } from "@/data/site";
 
 export const metadata: Metadata = {
   title: "Writing",
@@ -9,6 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default function WritingPage() {
+  if (!site.showWriting) notFound();
   const posts = getPosts();
 
   return (

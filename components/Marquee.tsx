@@ -1,5 +1,3 @@
-import { Star } from "@phosphor-icons/react/dist/ssr";
-
 /**
  * Single kinetic marquee (max one per page, per taste-skill). Constant linear motion.
  * The track is duplicated so the -50% translate loops seamlessly.
@@ -18,10 +16,10 @@ export function Marquee({ items }: { items: string[] }) {
         {sequence.map((item, i) => (
           <span
             key={i}
-            className="mx-6 inline-flex items-center gap-6 font-serif text-2xl font-light text-[var(--color-muted)] sm:text-3xl"
+            className="mx-6 inline-flex items-center gap-6 whitespace-nowrap font-serif text-2xl italic text-[var(--color-muted)] sm:text-3xl"
           >
             {item}
-            <Star weight="fill" className="size-3 text-[var(--color-accent)]" />
+            <span className="size-1.5 bg-[var(--color-accent)]" />
           </span>
         ))}
       </div>

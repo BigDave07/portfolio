@@ -10,7 +10,9 @@
 */
 @theme {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
+  /* Editorial serif for display; mono for system text. */
+  --font-serif: var(--font-display), ui-serif, Georgia, serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace;
 
   /* Neutrals (light mode fallback) */
   --color-bg: #f6f5f2;
@@ -32,17 +34,18 @@
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-/* Dark palette (default theme). No pure black - off-black keeps depth. */
+/* Monochrome HUD palette (dark only). Brightness is the only accent. */
 :root,
 .dark {
-  --color-bg: #0b0b0d;
-  --color-surface: #131316;
-  --color-border: #26262d;
-  --color-fg: #f0efec;
-  --color-muted: #a3a1ab;
-  --color-faint: #6a6a76;
-  --color-accent: #f5b13c;
-  --color-accent-soft: #fbcf82;
+  --color-bg: #060706;
+  --color-surface: #0e100e;
+  --color-border: #1e221e;
+  --color-fg: #eef2ea;
+  --color-muted: #9b9b9b;
+  --color-faint: #5a5a5a;
+  /* Signature accent: "signal lime", used for live/active states only. */
+  --color-accent: #c8ff2e;
+  --color-accent-soft: #e4ff9a;
 }
 
 @layer base {
@@ -169,42 +172,6 @@
     animation-range: entry 4% cover 30%;
   }
 
-  /* Animated aurora backdrop for the hero. Amber-tinted, not AI-purple. */
-  .hero-aurora {
-    position: absolute;
-    inset: -20% -10% auto -10%;
-    height: 70%;
-    z-index: 0;
-    pointer-events: none;
-    background:
-      radial-gradient(40% 55% at 22% 18%, color-mix(in oklab, var(--color-accent) 22%, transparent), transparent 70%),
-      radial-gradient(38% 50% at 78% 8%, color-mix(in oklab, var(--color-accent-soft) 14%, transparent), transparent 70%);
-    filter: blur(30px);
-    opacity: 0.9;
-    animation: aurora 16s ease-in-out infinite alternate;
-  }
-  @keyframes aurora {
-    0% {
-      transform: translate3d(-3%, -2%, 0) scale(1);
-    }
-    100% {
-      transform: translate3d(4%, 3%, 0) scale(1.12);
-    }
-  }
-
-  /* Faint dotted grid, masked to fade out. Organizes the hero space. */
-  .hero-grid {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background-image: radial-gradient(var(--color-border) 1px, transparent 1px);
-    background-size: 34px 34px;
-    -webkit-mask-image: radial-gradient(70% 60% at 30% 30%, #000 0%, transparent 75%);
-    mask-image: radial-gradient(70% 60% at 30% 30%, #000 0%, transparent 75%);
-    opacity: 0.5;
-  }
-
   /* Kinetic marquee. Constant motion => linear (Emil). Pauses under reduced motion. */
   .marquee-track {
     display: inline-flex;
@@ -219,92 +186,6 @@
   @media (prefers-reduced-motion: reduce) {
     .marquee-track {
       animation: none;
-    }
-    .hero-aurora {
-      animation: none;
-    }
-  }
-
-  /* --- Profile photo animations --- */
-
-  /* Entrance: unclip + rise (CSS, screenshot-safe). */
-  .photo-reveal {
-    animation: photo-in 0.9s var(--ease-out) both;
-    animation-delay: var(--d, 0ms);
-  }
-  @keyframes photo-in {
-    from {
-      opacity: 0;
-      transform: translateY(18px) scale(0.97);
-      clip-path: inset(10% 0 10% 0 round 1.5rem);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-      clip-path: inset(0 0 0 0 round 1.5rem);
-    }
-  }
-
-  /* Gentle idle float. */
-  .float-y {
-    animation: float-y 6s ease-in-out infinite;
-  }
-  @keyframes float-y {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
-  }
-
-  @keyframes spin360 {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  /* Rotating amber "beam" that sweeps around the photo frame.
-     Position comes from the `absolute inset-0` utility on the element;
-     do not set `position` here or it overrides that utility. */
-  .beam {
-    isolation: isolate;
-  }
-  .beam::before {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 175%;
-    height: 175%;
-    translate: -50% -50%;
-    z-index: 0;
-    background: conic-gradient(
-      from 0deg,
-      transparent 0deg,
-      var(--color-accent) 42deg,
-      transparent 130deg,
-      transparent 360deg
-    );
-    animation: spin360 5.5s linear infinite;
-  }
-  .beam-inner {
-    position: absolute;
-    inset: 2px;
-    z-index: 1;
-    overflow: hidden;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .float-y,
-    .beam::before {
-      animation: none;
-    }
-    /* Hold a soft static accent edge instead of a spinning beam. */
-    .beam::before {
-      background: var(--color-accent);
-      opacity: 0.35;
     }
   }
 
@@ -326,6 +207,131 @@
   @media (hover: hover) and (pointer: fine) {
     .card-spotlight:hover::before {
       opacity: 1;
+    }
+  }
+
+  /* --- HUD hero --- */
+
+  /* Frosted panel used for the hero's left column and the chat window. */
+  .glass {
+    background: color-mix(in oklab, var(--color-surface) 62%, transparent);
+    border: 1px solid var(--color-border);
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  }
+
+  /* Hero panel: dims what's behind it (half the face) without blurring it away. */
+  .hero-panel {
+    background: color-mix(in oklab, var(--color-surface) 55%, transparent);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  /* Fine technical grid behind the hero. */
+  .hud-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, color-mix(in oklab, var(--color-fg) 4%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklab, var(--color-fg) 4%, transparent) 1px, transparent 1px);
+    background-size: 48px 48px;
+    -webkit-mask-image: radial-gradient(80% 70% at 50% 45%, #000 30%, transparent 80%);
+    mask-image: radial-gradient(80% 70% at 50% 45%, #000 30%, transparent 80%);
+  }
+
+  /* A single bright line sweeping down the hero. Linear: constant mechanical motion. */
+  .scanline {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 120px;
+    pointer-events: none;
+    background: linear-gradient(to bottom, transparent, color-mix(in oklab, var(--color-fg) 6%, transparent) 85%, color-mix(in oklab, var(--color-fg) 22%, transparent));
+    animation: scan 7s linear infinite;
+  }
+  @keyframes scan {
+    from { transform: translateY(-120px); }
+    to { transform: translateY(100dvh); }
+  }
+
+  /* Shimmer passing across the big outlined/faded heading. */
+  .title-shimmer {
+    background: linear-gradient(100deg, var(--color-faint) 40%, var(--color-accent) 50%, var(--color-faint) 60%);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 6s var(--ease-in-out) infinite;
+  }
+  @keyframes shimmer {
+    from { background-position: 100% 0; }
+    to { background-position: -50% 0; }
+  }
+
+  /* Status ticker (top right). Duplicated track, -50% loop. */
+  .ticker-track {
+    display: inline-flex;
+    width: max-content;
+    animation: marquee 28s linear infinite;
+  }
+
+  .bar-fill {
+    transform-origin: left;
+    animation: bar-grow 1.4s var(--ease-out) both;
+    animation-delay: var(--d, 0ms);
+  }
+  @keyframes bar-grow {
+    from { transform: scaleX(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scanline,
+    .title-shimmer,
+    .ticker-track {
+      animation: none;
+    }
+  }
+
+  /* --- Outro --- */
+
+  /* Wordmark letters: gradient fill fading into the page, so the name "sits" on the floor. */
+  .outro-letter {
+    background: linear-gradient(to bottom, var(--color-fg) 20%, color-mix(in oklab, var(--color-fg) 0%, transparent) 95%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding-inline: 0.02em;
+  }
+
+  /* Scroll-linked entrances, staggered per item via --i, all finishing within the "entry" phase so
+     they complete even at the very bottom of the page. Only where scroll timelines exist;
+     elsewhere (and with reduced motion) everything simply sits in its final state. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .outro-word {
+        animation: outro-word linear both;
+        animation-timeline: view();
+        animation-range: entry calc(var(--i) * 8%) entry calc(60% + var(--i) * 10%);
+      }
+      .outro-letter {
+        animation: outro-letter linear both;
+        animation-timeline: view();
+        animation-range: entry calc(var(--i) * 4%) entry calc(55% + var(--i) * 5%);
+      }
+    }
+  }
+  @keyframes outro-word {
+    from {
+      opacity: 0;
+      transform: translateY(0.6em) rotate(3deg);
+      filter: blur(8px);
+    }
+  }
+  @keyframes outro-letter {
+    from {
+      opacity: 0;
+      transform: translateY(45%);
     }
   }
 }

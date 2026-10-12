@@ -16,6 +16,12 @@ export type ProjectMeta = {
   year: string;
   live?: string;
   repo?: string;
+  /** Looping scroll-through video of the live site (public path), shown on hover. */
+  preview?: string;
+  /** Still frame for the preview / thumbnail. */
+  poster?: string;
+  /** "phone" for portrait app recordings; default is a landscape browser capture. */
+  previewShape?: "phone" | "browser";
   /** Display order — lower is shown first. */
   order: number;
   featured: boolean;
@@ -57,6 +63,9 @@ export function getProjects(): ProjectMeta[] {
       year: String(data.year ?? ""),
       live: data.live ? String(data.live) : undefined,
       repo: data.repo ? String(data.repo) : undefined,
+      preview: data.preview ? String(data.preview) : undefined,
+      poster: data.poster ? String(data.poster) : undefined,
+      previewShape: (data.previewShape === "phone" ? "phone" : "browser") as ProjectMeta["previewShape"],
       order: Number(data.order ?? 99),
       featured: Boolean(data.featured ?? false),
     }))

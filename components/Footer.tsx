@@ -1,54 +1,127 @@
-import { GithubLogo, LinkedinLogo, EnvelopeSimple, ArrowUpRight } from "@phosphor-icons/react/dist/ssr";
+import type { CSSProperties } from "react";
+import { CopyEmail } from "@/components/CopyEmail";
+import { LocalClock } from "@/components/hud/LocalClock";
 import { site, socials } from "@/data/site";
 
-const icons = { GitHub: GithubLogo, LinkedIn: LinkedinLogo, Email: EnvelopeSimple } as const;
+const label = "font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-faint)]";
+const i = (n: number) => ({ "--i": n }) as CSSProperties;
 
+/**
+ * Outro: closing statement, email front and centre, then a full-width wordmark whose letters
+ * rise into place as you reach the bottom (CSS scroll timeline; static where unsupported).
+ */
 export function Footer() {
+  const [first, last] = site.fullName.split(" ");
+  const words = ["Let's", "build"];
+  const words2 = ["something", "real."];
+
   return (
-    <footer
-      id="contact"
-      className="container-page border-t border-[var(--color-border)] py-20"
-    >
-      <div className="flex flex-col gap-12 sm:flex-row sm:items-end sm:justify-between">
-        <div className="max-w-lg">
-          <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--color-accent)]">
-            Get in touch
-          </p>
+    <footer id="contact" className="relative mt-24 overflow-hidden border-t border-[var(--color-border)]">
+      <div className="mx-auto max-w-[90rem] px-5 pt-24 sm:px-8 sm:pt-32">
+        <p className={label}>
+          <span className="text-[var(--color-accent)]">●</span> You made it to the end
+        </p>
+
+        <h2 className="mt-5 font-serif text-[clamp(3.5rem,11vw,10.5rem)] leading-[0.88] tracking-tight">
+          <span className="block">
+            {words.map((w, n) => (
+              <span key={w} style={i(n)} className="outro-word mr-[0.22em] inline-block">
+                {w}
+              </span>
+            ))}
+          </span>
+          <em className="block text-[var(--color-accent)]">
+            {words2.map((w, n) => (
+              <span key={w} style={i(n + 2)} className="outro-word mr-[0.22em] inline-block">
+                {w}
+              </span>
+            ))}
+          </em>
+        </h2>
+
+        <div className="mt-12 grid gap-12 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div>
+            <p className="max-w-lg text-[16px] leading-7 text-[var(--color-muted)]">
+              Hiring, building something, or just curious how Synvora or Pickup work? My inbox is open, and I reply fast.
+            </p>
+            <div className="mt-6 flex flex-wrap items-center gap-4">
+              <a
+                href={site.links.email}
+                className="group relative font-serif text-[clamp(1.75rem,4.5vw,3.75rem)] leading-none text-[var(--color-fg)]"
+              >
+                {site.email}
+                <span className="absolute -bottom-2 left-0 h-px w-full origin-left scale-x-0 bg-[var(--color-accent)] transition-transform duration-500 ease-[var(--ease-out)] group-hover:scale-x-100" />
+              </a>
+              <CopyEmail email={site.email} />
+            </div>
+          </div>
+
           <a
-            href={site.links.email}
-            className="group inline-flex items-center gap-2 font-serif text-3xl font-light text-[var(--color-fg)] transition-colors hover:text-[var(--color-accent)] sm:text-4xl"
+            href="#main"
+            className="pressable group inline-flex size-28 flex-col items-center justify-center self-start rounded-full border border-[var(--color-border)] font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-muted)] hover:border-[var(--color-accent)] hover:text-[var(--color-fg)] lg:self-end"
           >
-            {site.email}
-            <ArrowUpRight
-              weight="bold"
-              className="size-6 -translate-x-1 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100"
-            />
+            <span className="mb-1 text-lg transition-transform group-hover:-translate-y-1">↑</span>
+            Back to top
           </a>
         </div>
 
-        <ul className="flex items-center gap-3">
-          {socials.map((s) => {
-            const Icon = icons[s.label as keyof typeof icons];
-            return (
-              <li key={s.label}>
-                <a
-                  href={s.href}
-                  target={s.external ? "_blank" : undefined}
-                  rel={s.external ? "noreferrer" : undefined}
-                  aria-label={s.label}
-                  className="pressable grid size-11 place-items-center rounded-full border border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-accent)] hover:text-[var(--color-fg)]"
-                >
-                  <Icon weight="regular" className="size-5" />
+        <div className="mt-16 grid gap-8 border-t border-[var(--color-border)] pt-8 sm:grid-cols-3">
+          <div>
+            <p className={label}>Elsewhere</p>
+            <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm">
+              {socials
+                .filter((s) => s.label !== "Email")
+                .map((s) => (
+                  <li key={s.label}>
+                    <a href={s.href} target="_blank" rel="noreferrer" className="text-[var(--color-fg)] hover:text-[var(--color-accent)]">
+                      {s.label} ↗
+                    </a>
+                  </li>
+                ))}
+              <li>
+                <a href={site.resume} target="_blank" rel="noreferrer" className="text-[var(--color-fg)] hover:text-[var(--color-accent)]">
+                  Resume ↗
                 </a>
               </li>
-            );
-          })}
-        </ul>
+            </ul>
+          </div>
+          <div>
+            <p className={label}>Based in</p>
+            <p className="mt-3 text-sm text-[var(--color-fg)]">
+              Regina, SK <span className="text-[var(--color-faint)]">·</span> <LocalClock timeZone={site.timeZone} />
+            </p>
+          </div>
+          <div>
+            <p className={label}>Status</p>
+            <p className="mt-3 flex items-center gap-2 text-sm text-[var(--color-fg)]">
+              <span className="relative flex size-2">
+                <span className="absolute inline-flex size-full animate-ping rounded-full bg-[var(--color-accent)] opacity-60" />
+                <span className="relative inline-flex size-2 rounded-full bg-[var(--color-accent)]" />
+              </span>
+              Open to SWE + AI engineering roles
+            </p>
+          </div>
+        </div>
       </div>
 
-      <p className="mt-14 text-xs text-[var(--color-faint)]">
-        © {new Date().getFullYear()} {site.fullName}. Built with Next.js and Tailwind.
+      {/* Full-bleed wordmark, bottom cropped so it reads as the ground the page stands on. */}
+      <p
+        aria-hidden
+        className="pointer-events-none mt-16 select-none whitespace-nowrap text-center font-serif text-[21.5vw] italic leading-[0.78] tracking-[-0.04em]"
+      >
+        {last.split("").map((ch, n) => (
+          <span key={n} style={i(n)} className="outro-letter inline-block">
+            {ch}
+          </span>
+        ))}
       </p>
+
+      <div className="relative mx-auto flex max-w-[90rem] flex-wrap justify-between gap-2 px-5 pb-6 pr-24 pt-4 font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-faint)] sm:px-8">
+        <span>
+          © {new Date().getFullYear()} {first} {last}
+        </span>
+        <span>Built from scratch with Next.js, Three.js &amp; Claude</span>
+      </div>
     </footer>
   );
 }

@@ -4,9 +4,10 @@ import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { Prose } from "@/components/Prose";
 import { getPost, getPosts, formatDate } from "@/lib/content";
+import { site } from "@/data/site";
 
 export function generateStaticParams() {
-  return getPosts().map((p) => ({ slug: p.slug }));
+  return site.showWriting ? getPosts().map((p) => ({ slug: p.slug })) : [];
 }
 
 export async function generateMetadata({
@@ -29,7 +30,7 @@ export default async function PostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = getPost(slug);
+  const post = site.showWriting ? getPost(slug) : null;
   if (!post) notFound();
 
   const { meta, content } = post;

@@ -1,0 +1,34 @@
+---
+title: "Synvora: AI skincare app"
+summary: Consumer skincare app with camera-based vision analysis and an LLM recommendation engine. Built solo as technical cofounder.
+category: AI / Mobile
+metric: Empty repo to App Store launch in under four months
+stack: [React Native, Expo, TypeScript, Supabase, Claude API, RevenueCat]
+year: "2026"
+live: https://synvoraskin.com
+order: 1
+preview: /projects/synvora-app.mp4
+poster: /projects/synvora-app.jpg
+previewShape: phone
+featured: true
+---
+
+## The product
+
+Synvora is a consumer skincare app for iOS and web. You scan your face from three
+angles, and it gives you observations and a routine built from products you can
+actually buy in Canada. It's live on the App Store.
+
+## What I built
+
+I built the whole product as the technical cofounder:
+
+- A React Native (Expo, TypeScript) iOS app with 39+ screens and subscription billing through RevenueCat.
+- A Next.js marketing site.
+- A multi-stage LLM backend on Supabase Edge Functions: a three-angle vision scan, a cached verdict layer, a routine assembler, a safety gate, and a conversational coach that remembers prior scans and onboarding answers.
+
+## Decisions that mattered
+
+- **Routing by task to cut cost.** Claude Sonnet handles vision analysis and product verdicts; Haiku handles chat. Verdicts are cached against a curated product database instead of re-querying per user.
+- **Observations, not diagnosis.** The model is constrained to describe visible traits only. That product-safety rule shaped the prompt contract and the App Store health-content rating.
+- **A curated product database.** 108 Canada-available products with metadata like fragrance-free flags, ingredient conflicts and pregnancy cautions, merged and cleaned from Open Beauty Facts and enriched with the Claude API.
