@@ -28,13 +28,15 @@ export function Nav() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-[var(--color-border)]/50 bg-[var(--color-bg)]/70 backdrop-blur-md">
       <nav aria-label="Main" className="mx-auto flex max-w-[90rem] items-center justify-between px-5 py-5 font-mono text-xs sm:px-8">
-        <Link href="/" className="group flex items-center gap-3" aria-label={`${site.fullName}, home`}>
-          <span className="grid size-8 place-items-center rounded-full border border-[var(--color-border)] font-serif text-base italic text-[var(--color-fg)] transition-colors group-hover:border-[var(--color-accent)]">
+        <Link href="/" className="group -m-2 flex items-center gap-3 p-2">
+          <span aria-hidden className="grid size-8 place-items-center rounded-full border border-[var(--color-border)] font-serif text-base italic text-[var(--color-fg)] transition-colors group-hover:border-[var(--color-accent)]">
             d
           </span>
           <span className="hidden text-[var(--color-muted)] sm:inline">
             {site.fullName.toLowerCase()} <span className="text-[var(--color-faint)]">/ software engineer</span>
+            <span className="sr-only"> (home)</span>
           </span>
+          <span className="sr-only sm:hidden">{site.fullName}, home</span>
         </Link>
 
         <ul className="hidden items-center gap-7 sm:flex">
@@ -62,7 +64,7 @@ export function Nav() {
           aria-expanded={open}
           aria-controls="nav-sheet"
           onClick={() => setOpen((o) => !o)}
-          className="pressable rounded-full border border-[var(--color-border)] px-4 py-2 uppercase tracking-[0.18em] text-[var(--color-fg)] sm:hidden"
+          className="pressable min-h-11 rounded-full border border-[var(--color-border)] px-5 uppercase tracking-[0.18em] text-[var(--color-fg)] sm:hidden"
         >
           {open ? "Close" : "Menu"}
         </button>
@@ -72,7 +74,7 @@ export function Nav() {
         <ul className="space-y-1">
           {items.map((item, i) => (
             <li key={item.href}>
-              <Link href={item.href} onClick={() => setOpen(false)} className="flex items-baseline gap-3 py-1.5">
+              <Link href={item.href} onClick={() => setOpen(false)} className="flex items-baseline gap-3 py-2.5">
                 <span className="font-mono text-xs text-[var(--color-faint)]">0{i + 1}</span>
                 <span className="font-serif text-3xl text-[var(--color-fg)]">{item.label}</span>
               </Link>

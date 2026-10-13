@@ -19,6 +19,32 @@ export const site = {
       "Technical cofounder of Synvora and founder of Pickup. I take AI products from customer discovery to production. CS @ University of Regina, Dec 2026.",
   },
 
+  /** Search / social metadata. Titles stay under ~60 chars, descriptions under ~160. */
+  seo: {
+    title: "David Oladipupo | Software Engineer & AI Builder in Regina, Canada",
+    description:
+      "David Oladipupo is a software engineer and technical cofounder in Regina, Canada, building AI products end to end, including the Synvora iOS app and Pickup voice agent.",
+    /** ISO date of the last meaningful content update; feeds the sitemap. Bump when you change the site's content. */
+    updated: "2026-10-13",
+    /** Topics David can credibly be associated with (Person schema `knowsAbout`). Facts from the resume only. */
+    knowsAbout: [
+      "AI engineering",
+      "LLM applications",
+      "Claude API",
+      "Voice agents",
+      "React Native",
+      "Next.js",
+      "TypeScript",
+      "Python",
+      "Supabase",
+      "Machine learning",
+    ],
+    city: "Regina",
+    region: "Saskatchewan",
+    country: "CA",
+    university: "University of Regina",
+  },
+
   location: "Regina, SK, Canada (open to relocation)",
   timeZone: "America/Regina",
 

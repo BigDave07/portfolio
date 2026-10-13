@@ -2,7 +2,8 @@
 
 import type { UIMessage } from "ai";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { FaceCloud } from "@/components/hud/FaceCloud";
+import { LazyFace as FaceCloud } from "@/components/hud/LazyFace";
+import { messageText } from "@/components/voice/text";
 import {
   createListener,
   createSpeaker,
@@ -21,13 +22,6 @@ type AgentState = "idle" | "listening" | "thinking" | "speaking";
 
 const emit = (detail: { level?: number; state?: string }) =>
   window.dispatchEvent(new CustomEvent("agent:voice", { detail }));
-
-/** All text of a message, with a space between parts (parts are separated by tool calls). */
-export const messageText = (m: UIMessage) =>
-  m.parts
-    .map((p) => (p.type === "text" ? p.text : ""))
-    .filter(Boolean)
-    .join(" ");
 
 type Props = {
   messages: UIMessage[];
@@ -256,7 +250,7 @@ export function VoiceAgent({ messages, status, send, abort, addGreeting, browser
 
       {phase === "intro" ? (
         <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-[var(--color-bg)] via-[var(--color-bg)]/90 to-transparent pt-24">
-        <div className="mx-auto max-w-xl px-5 pb-12 text-center">
+        <div className="mx-auto max-w-xl px-5 pb-[max(3rem,env(safe-area-inset-bottom))] text-center">
           <h2 className="font-serif text-5xl leading-tight">Talk to David</h2>
           <p className="mt-3 text-[15px] leading-7 text-[var(--color-muted)]">
             A quick voice chat with my AI twin. It speaks in my voice and can talk through whether I&apos;d fit a role
@@ -283,7 +277,7 @@ export function VoiceAgent({ messages, status, send, abort, addGreeting, browser
         </div>
       ) : (
         <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-[var(--color-bg)] via-[var(--color-bg)]/85 to-transparent pt-24">
-        <div className="mx-auto flex max-w-2xl flex-col items-center px-5 pb-8 text-center">
+        <div className="mx-auto flex max-w-2xl flex-col items-center px-5 pb-[max(2rem,env(safe-area-inset-bottom))] text-center">
           {booking && (
             <div className="mb-5 rounded-2xl border border-[var(--color-accent)]/60 bg-[var(--color-bg)]/80 px-6 py-4 backdrop-blur">
               <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-accent)]">Meeting booked</p>
@@ -336,7 +330,7 @@ export function VoiceAgent({ messages, status, send, abort, addGreeting, browser
               placeholder="Or type here (handy for your email)…"
               autoComplete="off"
               suppressHydrationWarning
-              className="min-w-0 flex-1 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)]/70 px-4 py-2.5 text-sm outline-none backdrop-blur placeholder:text-[var(--color-faint)] focus:border-[var(--color-faint)]"
+              className="min-w-0 flex-1 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)]/70 px-4 py-3 text-base outline-none backdrop-blur sm:py-2.5 sm:text-sm placeholder:text-[var(--color-faint)] focus:border-[var(--color-faint)]"
             />
             <button
               type="submit"

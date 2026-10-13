@@ -16,7 +16,7 @@ export function TalkButton() {
     <button
       type="button"
       onClick={() => window.dispatchEvent(new Event("agent:open-voice"))}
-      className="pressable inline-flex items-center gap-2 rounded-full border border-[var(--color-accent)] px-5 py-3 text-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-[var(--color-bg)]"
+      className="pressable inline-flex items-center gap-2 rounded-full border border-[var(--color-accent)] px-5 py-3.5 text-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-[var(--color-bg)]"
     >
       <span className="relative flex size-2">
         <span className="absolute inline-flex size-full animate-ping rounded-full bg-current opacity-60" />

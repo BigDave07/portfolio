@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { Prose } from "@/components/Prose";
+import { JsonLd } from "@/components/JsonLd";
+import { breadcrumbs, projectGraph } from "@/lib/seo";
 import { getProject, getProjects } from "@/lib/content";
 
 export function generateStaticParams() {
@@ -17,9 +19,14 @@ export async function generateMetadata({
   const { slug } = await params;
   const project = getProject(slug);
   if (!project) return {};
+  const m = project.meta;
+  const description = `${m.summary} ${m.metric}.`.slice(0, 200);
   return {
-    title: project.meta.title,
-    description: project.meta.summary,
+    title: { absolute: `${m.title} | David Oladipupo` },
+    description,
+    alternates: { canonical: `/work/${slug}` },
+    openGraph: { type: "article", url: `/work/${slug}`, title: `${m.title} | David Oladipupo`, description },
+    twitter: { title: `${m.title} | David Oladipupo`, description },
   };
 }
 
@@ -36,9 +43,17 @@ export default async function ProjectPage({
 
   return (
     <article className="container-page py-24">
+      <JsonLd data={projectGraph(meta)} />
+      <JsonLd
+        data={breadcrumbs([
+          { name: "Home", path: "/" },
+          { name: "Projects", path: "/work" },
+          { name: meta.title, path: `/work/${meta.slug}` },
+        ])}
+      />
       <Link
         href="/work"
-        className="group mb-12 inline-flex items-center gap-2 text-sm text-[var(--color-muted)] transition-colors hover:text-[var(--color-fg)]"
+        className="group mb-8 inline-flex min-h-11 items-center gap-2 text-sm text-[var(--color-muted)] transition-colors hover:text-[var(--color-fg)] sm:mb-12"
       >
         <span className="transition-transform group-hover:-translate-x-0.5">←</span>
         All work
@@ -142,8 +157,27 @@ export default async function ProjectPage({
         </a>
       )}
 
+      <section aria-labelledby="more-projects" className="mt-16 max-w-3xl">
+        <h2 id="more-projects" className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-faint)]">
+          More projects
+        </h2>
+        <ul className="mt-3 divide-y divide-[var(--color-border)] border-y border-[var(--color-border)]">
+          {getProjects()
+            .filter((p) => p.slug !== meta.slug)
+            .slice(0, 3)
+            .map((p) => (
+              <li key={p.slug}>
+                <Link href={`/work/${p.slug}`} className="group flex min-h-14 items-center justify-between gap-4 py-3 font-serif text-2xl hover:text-[var(--color-accent)]">
+                  {p.title}
+                  <span aria-hidden className="font-mono text-sm text-[var(--color-faint)] transition-transform group-hover:translate-x-1">→</span>
+                </Link>
+              </li>
+            ))}
+        </ul>
+      </section>
+
       <nav className="mt-10 max-w-3xl">
-        <Link href="/work" className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-muted)] hover:text-[var(--color-accent)]">
+        <Link href="/work" className="inline-flex min-h-11 items-center font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-muted)] hover:text-[var(--color-accent)]">
           ← All projects
         </Link>
       </nav>

@@ -65,3 +65,20 @@ Add the same variables in Vercel (Project -> Settings -> Environment Variables, 
 - Tools validate their input, require the visitor's explicit agreement before booking or sharing details, and the
   agent is instructed never to invent facts about David.
 - `CAL_MOCK=1` (local development only) swaps in a fake calendar so you can try the booking flow without Cal.com.
+
+## SEO
+
+What is built in:
+- Per-page titles, descriptions, canonical URLs and Open Graph / X cards, with generated share images for the site and every project.
+- Structured data (JSON-LD): `Person`, the `Organization`s David founded, `WebSite`, `ProfilePage`, `CollectionPage`/`ItemList`, `CreativeWork` per project and `BreadcrumbList`.
+- `robots.txt` (search and AI crawlers allowed, `/api/` blocked), `sitemap.xml` (real last-modified dates), `llms.txt` and `llms-full.txt` for AI assistants.
+- Speed: Three.js and the voice screen load after the page is idle; Lighthouse (mobile) is ~95+ for performance and 100 for accessibility and SEO.
+
+When you change content, bump `site.seo.updated` in `data/site.ts` so the sitemap reflects it.
+
+Off-site steps (these need your accounts; the code can't do them for you):
+1. **Google Search Console**: add `oladipupo.dev` as a *Domain* property (adds a DNS TXT record; Vercel DNS can add it in one click), or use the URL-prefix method and put the token in `GOOGLE_SITE_VERIFICATION`. Then submit `https://oladipupo.dev/sitemap.xml` and use URL Inspection -> Request indexing for `/`, `/about` and `/work`.
+2. **Bing Webmaster Tools** (Bing powers ChatGPT search and Copilot): import from Google Search Console, or set `BING_SITE_VERIFICATION`. Submit the same sitemap.
+3. **Link back to the site** from every profile you control: LinkedIn (Contact info -> Website, plus the Featured section), GitHub (profile Website field and the repo description), Synvora and Pickup (footer or about page), and any other bio. Links from real sites are the strongest signal for a new domain.
+4. Keep the name consistent everywhere: "David Oladipupo", the same photo, and "Software Engineer & AI Builder".
+

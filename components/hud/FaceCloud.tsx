@@ -88,7 +88,7 @@ const fragment = /* glsl */ `
 `;
 
 /** Grayscale (contrast-stretched) + Sobel edge strength of an image at n×n. */
-function edgeMap(img: CanvasImageSource, n: number) {
+function edgeMap(img: CanvasImageSource, n: number, withEdges = true) {
   const c = document.createElement("canvas");
   c.width = c.height = n;
   const ctx = c.getContext("2d", { willReadFrequently: true })!;
@@ -106,7 +106,7 @@ function edgeMap(img: CanvasImageSource, n: number) {
   for (let i = 0; i < lum.length; i++) lum[i] = Math.min(1, Math.max(0, (lum[i] - lo) / (hi - lo)));
   const edge = new Float32Array(n * n);
   const at = (x: number, y: number) => lum[y * n + x];
-  for (let y = 1; y < n - 1; y++) {
+  for (let y = 1; withEdges && y < n - 1; y++) {
     for (let x = 1; x < n - 1; x++) {
       const gx = at(x + 1, y - 1) + 2 * at(x + 1, y) + at(x + 1, y + 1) - at(x - 1, y - 1) - 2 * at(x - 1, y) - at(x - 1, y + 1);
       const gy = at(x - 1, y + 1) + 2 * at(x, y + 1) + at(x + 1, y + 1) - at(x - 1, y - 1) - 2 * at(x, y - 1) - at(x + 1, y - 1);
@@ -123,17 +123,24 @@ function edgeMap(img: CanvasImageSource, n: number) {
 
 const jitter = (p: number, s: number) => p + (Math.random() - 0.5) * s;
 
+/** Hand the main thread back to the browser (so scrolling and taps stay responsive during setup). */
+const yieldToMain = (): Promise<void> =>
+  typeof (globalThis as { scheduler?: { yield?: () => Promise<void> } }).scheduler?.yield === "function"
+    ? (globalThis as unknown as { scheduler: { yield: () => Promise<void> } }).scheduler.yield()
+    : new Promise((r) => setTimeout(r, 0));
+
 /**
  * Stipples the 3D head: even coverage everywhere (no holes), with the portrait projected onto the front so
  * each point's brightness and density follow your real light and shadow (forehead, nose, cheekbones, lips).
  * Photo edges sharpen features; horizontal scan rings add the contour look. Points sit just above the
  * surface so the occluder keeps them.
  */
-function sampleHead(
+async function sampleHead(
   mesh: THREE.Mesh,
   photo: ReturnType<typeof edgeMap> | null,
   texture: ReturnType<typeof edgeMap> | null,
   count: number,
+  cancelled: () => boolean,
 ) {
   const sampler = new MeshSurfaceSampler(mesh).build();
   const uv = new THREE.Vector2();
@@ -152,7 +159,14 @@ function sampleHead(
   };
 
   let i = 0;
+  let sliceStart = performance.now();
   for (let tries = 0; i < count && tries < count * 4; tries++) {
+    // Work in ~8 ms slices, then let the browser breathe.
+    if (performance.now() - sliceStart > 8) {
+      await yieldToMain();
+      if (cancelled()) return null;
+      sliceStart = performance.now();
+    }
     sampler.sample(p, n, undefined, uv);
     // How much the tone map applies: everywhere with the model's texture; with the projected photo, full on
     // the front and fading smoothly toward the sides (no seam).
@@ -327,20 +341,22 @@ export function FaceCloud({
       return new THREE.Points(g, material);
     }
 
-    function build(q: Quality) {
+    let buildId = 0;
+    async function build(q: Quality) {
       if (!ready) return;
+      const id = ++buildId; // a newer build (quality change) supersedes this one
+      const stale = () => disposed || id !== buildId;
+      let data: ReturnType<typeof samplePhoto> | null = null;
+      if (head) data = await sampleHead(head, edges, skin, MESH_POINTS[q], stale);
+      else if (edges) data = samplePhoto(edges);
+      if (!data || stale()) return;
       for (const p of [face, dust]) {
         if (!p) continue;
         group.remove(p);
         p.geometry.dispose();
       }
-      if (head) {
-        face = points(sampleHead(head, edges, skin, MESH_POINTS[q]));
-        uniforms.uRim.value = 1;
-      } else if (edges) {
-        face = points(samplePhoto(edges));
-        uniforms.uRim.value = 0;
-      } else return;
+      uniforms.uRim.value = head ? 1 : 0;
+      face = points(data);
       group.add(face);
 
       // Loose particles drifting around the head.
@@ -361,7 +377,7 @@ export function FaceCloud({
     Promise.all([loadImage(src), loadHead(model).catch(() => null)]).then(([img, loaded]) => {
       if (disposed) return;
       if (img) edges = edgeMap(img, 512);
-      if (loaded?.texture) skin = edgeMap(loaded.texture, 1024);
+      if (loaded?.texture) skin = edgeMap(loaded.texture, 1024, false);
       if (loaded) {
         head = new THREE.Mesh(loaded.geom, new THREE.MeshBasicMaterial({ colorWrite: false }));
         head.renderOrder = -1;

@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
 import { Reveal } from "@/components/motion/Reveal";
+import { JsonLd } from "@/components/JsonLd";
+import { aboutGraph, breadcrumbs } from "@/lib/seo";
 import { skillGroups } from "@/data/skills";
 import { site } from "@/data/site";
 
 export const metadata: Metadata = {
-  title: "About",
-  description: `${site.fullName}: software engineer and technical cofounder building AI products end to end.`,
+  title: { absolute: "About David Oladipupo | Software Engineer in Regina, SK" },
+  description:
+    "About David Oladipupo: software engineer and technical cofounder of Synvora and founder of Pickup, finishing Computer Science at the University of Regina in December 2026.",
+  alternates: { canonical: "/about" },
+  openGraph: { url: "/about", type: "profile", title: "About David Oladipupo", description: site.seo.description },
 };
 
 const label = "font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-faint)]";
@@ -21,12 +26,15 @@ const stats = [
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-[90rem] px-5 pb-24 pt-32 sm:px-8">
+      <JsonLd data={aboutGraph} />
+      <JsonLd data={breadcrumbs([{ name: "Home", path: "/" }, { name: "About", path: "/about" }])} />
       <Reveal>
         <p className={label}>
           <span className="text-[var(--color-accent)]">[03]</span> about.me
         </p>
         <h1 className="mt-3 font-serif text-[clamp(3.5rem,9vw,8rem)] leading-[0.9] tracking-tight">
           Meet <em className="text-[var(--color-muted)]">David.</em>
+          <span className="sr-only"> Oladipupo, software engineer in {site.seo.city}, {site.seo.region}, Canada</span>
         </h1>
       </Reveal>
 
@@ -36,8 +44,11 @@ export default function AboutPage() {
           <figure>
             {/* eslint-disable-next-line @next/next/no-img-element -- single static portrait */}
             <img
-              src="/ai/portrait.jpg"
-              alt={`Portrait of ${site.fullName}`}
+              src="/ai/portrait-640.jpg"
+              alt={`Portrait of ${site.fullName}, software engineer in ${site.seo.city}, ${site.seo.region}`}
+              width={640}
+              height={640}
+              fetchPriority="high"
               className="aspect-[4/5] w-full rounded-2xl border border-[var(--color-border)] object-cover grayscale"
             />
             <figcaption className={`${label} mt-3 flex flex-col gap-1`}>
@@ -58,6 +69,27 @@ export default function AboutPage() {
                 <p key={p.slice(0, 24)}>{p}</p>
               ))}
             </div>
+          </Reveal>
+
+          <Reveal>
+            <p className={label}>
+              <span className="text-[var(--color-accent)]">&gt;</span> quick_facts
+            </p>
+            <dl className="mt-4 grid max-w-2xl gap-x-6 gap-y-3 text-[15px] leading-7 sm:grid-cols-[8rem_1fr]">
+              {[
+                ["Who", `${site.fullName}, ${site.role.toLowerCase()} and technical cofounder`],
+                ["Based in", `${site.seo.city}, ${site.seo.region}, Canada (open to relocation)`],
+                ["Founded", "Synvora (AI skincare app) and Pickup (AI voice intake agent)"],
+                ["Builds with", "TypeScript, Python, React Native, Next.js, Supabase and the Claude API"],
+                ["Studying", `Computer Science, ${site.seo.university}, graduating December 2026`],
+                ["Looking for", "Software engineering and AI engineering roles"],
+              ].map(([k, v]) => (
+                <div key={k} className="contents">
+                  <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--color-faint)] sm:pt-1.5">{k}</dt>
+                  <dd className="text-[var(--color-muted)]">{v}</dd>
+                </div>
+              ))}
+            </dl>
           </Reveal>
 
           <Reveal>

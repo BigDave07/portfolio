@@ -24,7 +24,7 @@ export default function Home() {
         <Reveal className="mt-10">
           <Link
             href="/work"
-            className="group inline-flex items-center gap-2 text-sm text-[var(--color-muted)] transition-colors hover:text-[var(--color-fg)]"
+            className="group inline-flex min-h-11 items-center gap-2 text-sm text-[var(--color-muted)] transition-colors hover:text-[var(--color-fg)]"
           >
             All projects
             <ArrowRight
@@ -45,7 +45,7 @@ export default function Home() {
           <Reveal>
             <Link
               href="/about"
-              className="group inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-accent)]"
+              className="group inline-flex min-h-11 items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-accent)]"
             >
               More about me
               <ArrowRight weight="bold" className="size-4 transition-transform group-hover:translate-x-0.5" />
