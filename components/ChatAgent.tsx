@@ -2,7 +2,8 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { VoiceAgent, messageText } from "@/components/voice/VoiceAgent";
 
 const suggestions = ["How did you build Synvora?", "What is Pickup?", "Are you open to new roles?"];
 const AVATAR_VIDEO = "/ai/avatar.mp4";
@@ -23,17 +24,44 @@ function Avatar({ className }: { className: string }) {
   );
 }
 
-/** "AI David": animated-portrait launcher + streaming chat panel. Text only, no audio. */
+/** "AI David": animated-portrait launcher, streaming text chat, and the full-screen voice conversation. */
 export function ChatAgent() {
   const [open, setOpen] = useState(false);
+  const [voiceOpen, setVoiceOpen] = useState(false);
+  // Whether the voice agent is available (needs the ElevenLabs voice configured; always on in local dev).
+  const [voice, setVoice] = useState<{ enabled: boolean; browserVoice: boolean; booking: boolean }>({ enabled: false, browserVoice: false, booking: false });
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
-  const { messages, sendMessage, status, error } = useChat({
+  const { messages, sendMessage, setMessages, stop, status, error } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
   const busy = status === "submitted" || status === "streaming";
+
+  useEffect(() => {
+    fetch("/api/tts")
+      .then((r) => r.json())
+      .then(setVoice)
+      .catch(() => {});
+    const openVoice = () => setVoiceOpen(true);
+    addEventListener("agent:open-voice", openVoice);
+    return () => removeEventListener("agent:open-voice", openVoice);
+  }, []);
+
+  /** Every request carries how the visitor is talking and their time zone (for booking times). */
+  const sendAs = useCallback(
+    (text: string, mode: "text" | "voice") =>
+      sendMessage({ text }, { body: { mode, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone } }),
+    [sendMessage],
+  );
+  const addGreeting = useCallback(
+    (text: string) =>
+      setMessages((prev) => [...prev, { id: `greeting-${Date.now()}`, role: "assistant", parts: [{ type: "text", text }] }]),
+    [setMessages],
+  );
+  const sendVoice = useCallback((text: string) => sendAs(text, "voice"), [sendAs]);
+  const closeVoice = useCallback(() => setVoiceOpen(false), []);
 
   useEffect(() => {
     if (open) inputRef.current?.focus();
@@ -49,7 +77,7 @@ export function ChatAgent() {
   function send(text: string) {
     const t = text.trim();
     if (!t || busy) return;
-    sendMessage({ text: t });
+    sendAs(t, "text");
     setInput("");
   }
 
@@ -86,6 +114,18 @@ export function ChatAgent() {
               {busy ? "Typing..." : "AI version of David / online"}
             </p>
           </div>
+          {voice.enabled && (
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                setVoiceOpen(true);
+              }}
+              className="pressable rounded-full border border-[var(--color-accent)] px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-[var(--color-bg)]"
+            >
+              ● Talk
+            </button>
+          )}
         </header>
 
         <div ref={listRef} aria-live="polite" className="flex-1 space-y-3 overflow-y-auto p-4 text-sm leading-6">
@@ -108,19 +148,40 @@ export function ChatAgent() {
               </div>
             </div>
           )}
-          {messages.map((m) => (
-            <div key={m.id} className={m.role === "user" ? "flex justify-end" : "flex"}>
-              <p
-                className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3.5 py-2 ${
-                  m.role === "user"
-                    ? "bg-[var(--color-fg)] text-[var(--color-bg)]"
-                    : "border border-[var(--color-border)] text-[var(--color-fg)]"
-                }`}
-              >
-                {m.parts.map((p, i) => (p.type === "text" ? <span key={i}>{p.text}</span> : null))}
-              </p>
-            </div>
-          ))}
+          {messages.map((m) => {
+            const text = messageText(m);
+            const booked = m.parts.find(
+              (p) => p.type === "tool-book_meeting" && "state" in p && p.state === "output-available" && (p.output as { booked?: boolean })?.booked,
+            ) as { output: { when: string; inviteSentTo: string } } | undefined;
+            const working = m.parts.some(
+              (p) => p.type.startsWith("tool-") && "state" in p && p.state !== "output-available" && p.state !== "output-error",
+            );
+            return (
+              <div key={m.id} className={m.role === "user" ? "flex justify-end" : "flex flex-col items-start gap-2"}>
+                {text && (
+                  <p
+                    className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3.5 py-2 ${
+                      m.role === "user"
+                        ? "bg-[var(--color-fg)] text-[var(--color-bg)]"
+                        : "border border-[var(--color-border)] text-[var(--color-fg)]"
+                    }`}
+                  >
+                    {text}
+                  </p>
+                )}
+                {working && (
+                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-accent)]">Checking David&apos;s calendar…</p>
+                )}
+                {booked && (
+                  <div className="max-w-[85%] rounded-2xl border border-[var(--color-accent)]/60 px-3.5 py-3">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-accent)]">Meeting booked</p>
+                    <p className="mt-1 font-serif text-xl">{booked.output.when}</p>
+                    <p className="mt-0.5 text-xs text-[var(--color-muted)]">Invite sent to {booked.output.inviteSentTo}</p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
           {error && (
             <p className="font-mono text-xs text-red-400">Connection lost. Try again, or email me directly.</p>
           )}
@@ -155,6 +216,19 @@ export function ChatAgent() {
           </button>
         </form>
       </section>
+
+      {voiceOpen && (
+        <VoiceAgent
+          messages={messages}
+          status={status}
+          send={sendVoice}
+          abort={stop}
+          addGreeting={addGreeting}
+          browserVoice={voice.browserVoice}
+          booking={voice.booking}
+          onClose={closeVoice}
+        />
+      )}
     </>
   );
 }

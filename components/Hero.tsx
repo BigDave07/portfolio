@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import Link from "next/link";
 import { FaceCloud } from "@/components/hud/FaceCloud";
 import { LocalClock } from "@/components/hud/LocalClock";
+import { TalkButton } from "@/components/voice/TalkButton";
 import { site } from "@/data/site";
 
 const label = "font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-faint)]";
@@ -31,6 +32,7 @@ export function Hero() {
             <a href={site.resume} target="_blank" rel="noreferrer" className="pressable rounded-full border border-[var(--color-border)] px-5 py-3 text-[var(--color-fg)] hover:border-[var(--color-fg)]">
               Resume
             </a>
+            <TalkButton />
           </div>
         </div>
 
