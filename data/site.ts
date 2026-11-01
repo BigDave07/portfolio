@@ -111,5 +111,6 @@ export const marqueeItems = [
   "Supabase",
   "Python",
   "Agent orchestration",
+  "Hackathon winner",
   "Open to SWE + AI roles",
 ];
