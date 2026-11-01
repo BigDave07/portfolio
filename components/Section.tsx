@@ -5,6 +5,8 @@ type SectionProps = {
   id?: string;
   /** Optional small eyebrow label above the heading. Use sparingly (max 1 per 3 sections). */
   eyebrow?: string;
+  /** Use "h1" when the section title is the page's main heading. */
+  as?: "h1" | "h2";
   /** HUD index shown before the eyebrow, e.g. "02". */
   index?: string;
   title?: string;
@@ -12,7 +14,7 @@ type SectionProps = {
   className?: string;
 };
 
-export function Section({ id, eyebrow, index, title, children, className }: SectionProps) {
+export function Section({ id, eyebrow, index, title, as: Heading = "h2", children, className }: SectionProps) {
   return (
     <section
       id={id}
@@ -27,9 +29,7 @@ export function Section({ id, eyebrow, index, title, children, className }: Sect
             </p>
           )}
           {title && (
-            <h2 className="font-serif text-5xl leading-[0.95] tracking-tight text-[var(--color-fg)] sm:text-7xl">
-              {title}
-            </h2>
+            <Heading className="font-serif text-5xl leading-[0.95] tracking-tight text-[var(--color-fg)] sm:text-7xl">{title}</Heading>
           )}
         </Reveal>
       )}

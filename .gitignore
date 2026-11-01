@@ -45,3 +45,6 @@ next-env.d.ts
 # local screen recordings
 *.mov
 .env*
+
+# keep the template, ignore real env files
+!.env.example

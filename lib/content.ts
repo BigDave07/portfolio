@@ -42,6 +42,8 @@ export type AwardMeta = {
   date: string;
   summary: string;
   images: { src: string; alt: string }[];
+  /** The MDX body (the write-up under the frontmatter). */
+  body: string;
   order: number;
 };
 
@@ -106,7 +108,7 @@ export function getProject(slug: string): Loaded<ProjectMeta> | null {
 
 export function getAwards(): AwardMeta[] {
   return readCollection("awards")
-    .map(({ slug, data }) => ({
+    .map(({ slug, data, content }) => ({
       slug,
       title: String(data.title ?? slug),
       result: String(data.result ?? ""),
@@ -121,6 +123,7 @@ export function getAwards(): AwardMeta[] {
             .filter((i) => typeof i?.src === "string")
             .map((i) => ({ src: String(i.src), alt: String(i.alt ?? "") }))
         : [],
+      body: content,
       order: Number(data.order ?? 99),
     }))
     .sort((a, b) => a.order - b.order);

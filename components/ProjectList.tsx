@@ -12,7 +12,7 @@ const SIZE = { browser: { w: 380, h: 238 }, phone: { w: 200, h: 434 } } as const
  * scroll-through of the live site; the row itself opens the live site (or the case study when
  * there's no live link). Touch / reduced-motion visitors get the static thumbnails instead.
  */
-export function ProjectList({ projects }: { projects: ProjectMeta[] }) {
+export function ProjectList({ projects, as: Heading = "h3" }: { projects: ProjectMeta[]; /** Heading level for project titles; use "h2" when the page title is an h1. */ as?: "h2" | "h3" }) {
   const [active, setActive] = useState<ProjectMeta | null>(null);
   const [canFloat, setCanFloat] = useState(false);
   const box = useRef<HTMLDivElement>(null);
@@ -80,7 +80,7 @@ export function ProjectList({ projects }: { projects: ProjectMeta[] }) {
                 </span>
 
                 <div className="min-w-0">
-                  <h3 className="font-serif text-3xl leading-tight text-[var(--color-fg)] sm:text-[2.6rem]">
+                  <Heading className="font-serif text-3xl leading-tight text-[var(--color-fg)] sm:text-[2.6rem]">
                     {/* Stretched link: the whole row opens the case study (the live site is one click further). */}
                     <Link
                       href={`/work/${p.slug}`}
@@ -91,7 +91,7 @@ export function ProjectList({ projects }: { projects: ProjectMeta[] }) {
                         →
                       </span>
                     </Link>
-                  </h3>
+                  </Heading>
                   <ul className="mt-3 flex flex-wrap gap-1.5 font-mono text-[10px] uppercase tracking-widest text-[var(--color-muted)]">
                     {[p.category, p.year, ...p.stack.slice(0, 3)].map((t) => (
                       <li key={t} className="rounded-sm border border-[var(--color-border)] px-2 py-0.5">

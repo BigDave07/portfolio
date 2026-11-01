@@ -34,12 +34,24 @@ const vertex = /* glsl */ `
   uniform vec2 uMouse;
   uniform float uMouseOn;
   uniform float uAspect;
+  uniform float uTalk;
+  uniform float uListen;
   varying float vLum;
   varying float vSweep;
   varying float vAtt;
+  varying float vTalk;
   void main() {
     // Assemble: points start as noise around their target and converge.
     vec3 p = mix(aScatter, position, uIntro);
+
+    // Speaking: the mouth/jaw area ripples outward with the voice level and glows.
+    // (The mouth sits at about y = -0.07 on the normalised head, face toward +z.)
+    float mouth = smoothstep(0.27, 0.0, length((position.xy - vec2(0.0, -0.06)) * vec2(0.85, 1.2))) * smoothstep(0.1, 0.5, normal.z);
+    float ripple = 0.55 + 0.45 * sin(uTime * 22.0 + position.y * 26.0 + position.x * 9.0);
+    p += normal * mouth * uTalk * 0.075 * ripple;
+    p.y -= mouth * uTalk * 0.02;
+    vTalk = mouth * uTalk;
+
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
     vec3 n = normalize(normalMatrix * normal);
 
@@ -52,8 +64,8 @@ const vertex = /* glsl */ `
     float rim = pow(1.0 - abs(dot(n, normalize(-mv.xyz))), 2.2);
     vSweep = smoothstep(0.045, 0.0, abs(position.y - uSweep)) * uIntro;
     vAtt = att;
-    vLum = max(aLum, rim * uRim) + att * 0.5;
-    gl_PointSize = uSize * (0.55 + vLum * 0.6 + vSweep * 0.8) * (3.0 / -mv.z);
+    vLum = max(aLum, rim * uRim) + att * 0.5 + vTalk * 0.8 + uListen * rim * 0.35;
+    gl_PointSize = uSize * (0.55 + vLum * 0.6 + vSweep * 0.8 + vTalk * 1.2) * (3.0 / -mv.z);
     gl_Position = projectionMatrix * mv;
   }
 `;
@@ -64,10 +76,11 @@ const fragment = /* glsl */ `
   varying float vLum;
   varying float vSweep;
   varying float vAtt;
+  varying float vTalk;
   void main() {
     float d = length(gl_PointCoord - 0.5);
     if (d > 0.5) discard;
-    float glow = max(vSweep, vAtt * 0.6);
+    float glow = max(max(vSweep, vAtt * 0.6), vTalk * 1.4);
     vec3 c = mix(uColor, uAccent, glow);
     float a = smoothstep(0.5, 0.05, d) * (0.06 + vLum * 1.0 + vSweep * 0.8);
     gl_FragColor = vec4(c, a);
@@ -75,7 +88,7 @@ const fragment = /* glsl */ `
 `;
 
 /** Grayscale (contrast-stretched) + Sobel edge strength of an image at n×n. */
-function edgeMap(img: CanvasImageSource, n: number) {
+function edgeMap(img: CanvasImageSource, n: number, withEdges = true) {
   const c = document.createElement("canvas");
   c.width = c.height = n;
   const ctx = c.getContext("2d", { willReadFrequently: true })!;
@@ -93,7 +106,7 @@ function edgeMap(img: CanvasImageSource, n: number) {
   for (let i = 0; i < lum.length; i++) lum[i] = Math.min(1, Math.max(0, (lum[i] - lo) / (hi - lo)));
   const edge = new Float32Array(n * n);
   const at = (x: number, y: number) => lum[y * n + x];
-  for (let y = 1; y < n - 1; y++) {
+  for (let y = 1; withEdges && y < n - 1; y++) {
     for (let x = 1; x < n - 1; x++) {
       const gx = at(x + 1, y - 1) + 2 * at(x + 1, y) + at(x + 1, y + 1) - at(x - 1, y - 1) - 2 * at(x - 1, y) - at(x - 1, y + 1);
       const gy = at(x - 1, y + 1) + 2 * at(x, y + 1) + at(x + 1, y + 1) - at(x - 1, y - 1) - 2 * at(x, y - 1) - at(x + 1, y - 1);
@@ -110,17 +123,24 @@ function edgeMap(img: CanvasImageSource, n: number) {
 
 const jitter = (p: number, s: number) => p + (Math.random() - 0.5) * s;
 
+/** Hand the main thread back to the browser (so scrolling and taps stay responsive during setup). */
+const yieldToMain = (): Promise<void> =>
+  typeof (globalThis as { scheduler?: { yield?: () => Promise<void> } }).scheduler?.yield === "function"
+    ? (globalThis as unknown as { scheduler: { yield: () => Promise<void> } }).scheduler.yield()
+    : new Promise((r) => setTimeout(r, 0));
+
 /**
  * Stipples the 3D head: even coverage everywhere (no holes), with the portrait projected onto the front so
  * each point's brightness and density follow your real light and shadow (forehead, nose, cheekbones, lips).
  * Photo edges sharpen features; horizontal scan rings add the contour look. Points sit just above the
  * surface so the occluder keeps them.
  */
-function sampleHead(
+async function sampleHead(
   mesh: THREE.Mesh,
   photo: ReturnType<typeof edgeMap> | null,
   texture: ReturnType<typeof edgeMap> | null,
   count: number,
+  cancelled: () => boolean,
 ) {
   const sampler = new MeshSurfaceSampler(mesh).build();
   const uv = new THREE.Vector2();
@@ -139,7 +159,14 @@ function sampleHead(
   };
 
   let i = 0;
+  let sliceStart = performance.now();
   for (let tries = 0; i < count && tries < count * 4; tries++) {
+    // Work in ~8 ms slices, then let the browser breathe.
+    if (performance.now() - sliceStart > 8) {
+      await yieldToMain();
+      if (cancelled()) return null;
+      sliceStart = performance.now();
+    }
     sampler.sample(p, n, undefined, uv);
     // How much the tone map applies: everywhere with the model's texture; with the projected photo, full on
     // the front and fading smoothly toward the sides (no seam).
@@ -282,6 +309,8 @@ export function FaceCloud({
       uSweep: { value: 9 },
       uMouse: { value: new THREE.Vector2(9, 9) },
       uMouseOn: { value: 0 },
+      uTalk: { value: 0 },
+      uListen: { value: 0 },
       uAspect: { value: 1 },
       uColor: { value: new THREE.Color(BASE) },
       uAccent: { value: new THREE.Color(ACCENT) },
@@ -312,20 +341,22 @@ export function FaceCloud({
       return new THREE.Points(g, material);
     }
 
-    function build(q: Quality) {
+    let buildId = 0;
+    async function build(q: Quality) {
       if (!ready) return;
+      const id = ++buildId; // a newer build (quality change) supersedes this one
+      const stale = () => disposed || id !== buildId;
+      let data: ReturnType<typeof samplePhoto> | null = null;
+      if (head) data = await sampleHead(head, edges, skin, MESH_POINTS[q], stale);
+      else if (edges) data = samplePhoto(edges);
+      if (!data || stale()) return;
       for (const p of [face, dust]) {
         if (!p) continue;
         group.remove(p);
         p.geometry.dispose();
       }
-      if (head) {
-        face = points(sampleHead(head, edges, skin, MESH_POINTS[q]));
-        uniforms.uRim.value = 1;
-      } else if (edges) {
-        face = points(samplePhoto(edges));
-        uniforms.uRim.value = 0;
-      } else return;
+      uniforms.uRim.value = head ? 1 : 0;
+      face = points(data);
       group.add(face);
 
       // Loose particles drifting around the head.
@@ -346,7 +377,7 @@ export function FaceCloud({
     Promise.all([loadImage(src), loadHead(model).catch(() => null)]).then(([img, loaded]) => {
       if (disposed) return;
       if (img) edges = edgeMap(img, 512);
-      if (loaded?.texture) skin = edgeMap(loaded.texture, 1024);
+      if (loaded?.texture) skin = edgeMap(loaded.texture, 1024, false);
       if (loaded) {
         head = new THREE.Mesh(loaded.geom, new THREE.MeshBasicMaterial({ colorWrite: false }));
         head.renderOrder = -1;
@@ -370,6 +401,10 @@ export function FaceCloud({
     resize();
     const ro = new ResizeObserver(resize);
     ro.observe(el);
+    // Don't spend GPU time while the head is off-screen or the tab is hidden.
+    let visible = true;
+    const io = new IntersectionObserver(([entry]) => (visible = entry.isIntersecting));
+    io.observe(el);
 
     // Head follows the pointer a little; cursor position drives the attention glow.
     const target = { x: 0, y: 0 };
@@ -385,11 +420,24 @@ export function FaceCloud({
     addEventListener("pointermove", onMove);
     document.documentElement.addEventListener("pointerleave", onLeave);
 
+    // Voice agent drives the head: level (0..1) while David speaks, "listening" while the visitor talks.
+    const voice = { level: 0, listening: 0 };
+    const onVoice = (e: Event) => {
+      const d = (e as CustomEvent<{ level?: number; state?: string }>).detail;
+      if (typeof d.level === "number") voice.level = d.level;
+      if (d.state) voice.listening = d.state === "listening" ? 1 : 0;
+    };
+    addEventListener("agent:voice", onVoice);
+
     const t0 = performance.now();
     let raf = 0;
     let trainFrom = -1; // when the head was built; it assembles from noise from there
 
     const tick = () => {
+      if (!visible || document.hidden) {
+        raf = requestAnimationFrame(tick);
+        return;
+      }
       const t = (performance.now() - t0) / 1000;
       uniforms.uTime.value = t;
       if (face && trainFrom < 0) trainFrom = t;
@@ -401,6 +449,10 @@ export function FaceCloud({
       group.rotation.y += (target.x + Math.sin(t * 0.3) * 0.3 - group.rotation.y) * 0.04;
       group.rotation.x += (target.y + Math.sin(t * 0.21) * 0.05 - group.rotation.x) * 0.04;
       if (dust) dust.rotation.y = t * 0.03;
+      // Smooth the voice signal: fast attack so the mouth pops with each syllable, slower release.
+      const tk = uniforms.uTalk.value;
+      uniforms.uTalk.value += (voice.level - tk) * (voice.level > tk ? 0.5 : 0.15);
+      uniforms.uListen.value += (voice.listening - uniforms.uListen.value) * 0.08;
       renderer.render(scene, camera);
       raf = requestAnimationFrame(tick);
     };
@@ -410,8 +462,10 @@ export function FaceCloud({
       disposed = true;
       cancelAnimationFrame(raf);
       ro.disconnect();
+      io.disconnect();
       offQuality();
       removeEventListener("pointermove", onMove);
+      removeEventListener("agent:voice", onVoice);
       document.documentElement.removeEventListener("pointerleave", onLeave);
       face?.geometry.dispose();
       dust?.geometry.dispose();

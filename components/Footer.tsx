@@ -47,7 +47,7 @@ export function Footer() {
             <div className="mt-6 flex flex-wrap items-center gap-4">
               <a
                 href={site.links.email}
-                className="group relative font-serif text-[clamp(1.75rem,4.5vw,3.75rem)] leading-none text-[var(--color-fg)]"
+                className="group relative py-2 font-serif text-[clamp(1.75rem,4.5vw,3.75rem)] leading-none text-[var(--color-fg)]"
               >
                 {site.email}
                 <span className="absolute -bottom-2 left-0 h-px w-full origin-left scale-x-0 bg-[var(--color-accent)] transition-transform duration-500 ease-[var(--ease-out)] group-hover:scale-x-100" />
@@ -65,21 +65,33 @@ export function Footer() {
           </a>
         </div>
 
-        <div className="mt-16 grid gap-8 border-t border-[var(--color-border)] pt-8 sm:grid-cols-3">
+        <div className="mt-16 grid gap-8 border-t border-[var(--color-border)] pt-8 sm:grid-cols-2 lg:grid-cols-4">
+          <nav aria-label="Site">
+            <p className={label}>Explore</p>
+            <ul className="mt-1 flex flex-wrap gap-x-5 text-sm">
+              {[["Projects", "/work"], ["About", "/about"], ["Synvora", "/work/synvora"], ["Pickup", "/work/pickup"]].map(([name, href]) => (
+                <li key={href}>
+                  <a href={href} className="inline-flex min-h-11 items-center text-[var(--color-fg)] hover:text-[var(--color-accent)]">
+                    {name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
           <div>
             <p className={label}>Elsewhere</p>
-            <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm">
+            <ul className="mt-1 flex flex-wrap gap-x-5 text-sm">
               {socials
                 .filter((s) => s.label !== "Email")
                 .map((s) => (
                   <li key={s.label}>
-                    <a href={s.href} target="_blank" rel="noreferrer" className="text-[var(--color-fg)] hover:text-[var(--color-accent)]">
+                    <a href={s.href} target="_blank" rel="me noopener noreferrer" className="inline-flex min-h-11 items-center text-[var(--color-fg)] hover:text-[var(--color-accent)]">
                       {s.label} ↗
                     </a>
                   </li>
                 ))}
               <li>
-                <a href={site.resume} target="_blank" rel="noreferrer" className="text-[var(--color-fg)] hover:text-[var(--color-accent)]">
+                <a href={site.resume} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center text-[var(--color-fg)] hover:text-[var(--color-accent)]">
                   Resume ↗
                 </a>
               </li>

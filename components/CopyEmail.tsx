@@ -17,7 +17,7 @@ export function CopyEmail({ email }: { email: string }) {
           location.href = `mailto:${email}`;
         }
       }}
-      className="pressable rounded-full border border-[var(--color-border)] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--color-muted)] hover:border-[var(--color-accent)] hover:text-[var(--color-fg)]"
+      className="pressable min-h-11 rounded-full border border-[var(--color-border)] px-5 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--color-muted)] hover:border-[var(--color-accent)] hover:text-[var(--color-fg)]"
     >
       <span aria-live="polite">{copied ? "Copied ✓" : "Copy"}</span>
     </button>
