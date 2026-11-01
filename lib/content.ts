@@ -27,6 +27,24 @@ export type ProjectMeta = {
   featured: boolean;
 };
 
+export type AwardMeta = {
+  slug: string;
+  title: string;
+  /** Headline outcome, e.g. "2nd place" or "$7,000 in prizes". */
+  result: string;
+  host: string;
+  /** Team name, when the team had one (e.g. "Penrider"). */
+  team?: string;
+  /** What was pitched (e.g. "Downtown Unity Centre"). */
+  idea?: string;
+  year: string;
+  /** Human-readable date, e.g. "November 2025". */
+  date: string;
+  summary: string;
+  images: { src: string; alt: string }[];
+  order: number;
+};
+
 export type PostMeta = {
   slug: string;
   title: string;
@@ -82,6 +100,30 @@ export function getProject(slug: string): Loaded<ProjectMeta> | null {
   const all = getProjects();
   const meta = all.find((p) => p.slug === slug)!;
   return { meta, content: item.content };
+}
+
+/* ---------- Awards ---------- */
+
+export function getAwards(): AwardMeta[] {
+  return readCollection("awards")
+    .map(({ slug, data }) => ({
+      slug,
+      title: String(data.title ?? slug),
+      result: String(data.result ?? ""),
+      host: String(data.host ?? ""),
+      team: data.team ? String(data.team) : undefined,
+      idea: data.idea ? String(data.idea) : undefined,
+      year: String(data.year ?? ""),
+      date: String(data.date ?? data.year ?? ""),
+      summary: String(data.summary ?? ""),
+      images: Array.isArray(data.images)
+        ? (data.images as { src?: unknown; alt?: unknown }[])
+            .filter((i) => typeof i?.src === "string")
+            .map((i) => ({ src: String(i.src), alt: String(i.alt ?? "") }))
+        : [],
+      order: Number(data.order ?? 99),
+    }))
+    .sort((a, b) => a.order - b.order);
 }
 
 /* ---------- Writing ---------- */
