@@ -11,8 +11,9 @@ function Visual({ award }: { award: AwardMeta }) {
       </div>
     );
   }
+  // One photo: full width. Two: stacked on phones, side by side from 480px up.
   return (
-    <div className={`grid gap-2 ${extra ? "grid-cols-[2fr_1fr]" : "grid-cols-1"}`}>
+    <div className={`grid gap-2 ${extra ? "grid-cols-1 min-[480px]:grid-cols-2" : "grid-cols-1"}`}>
       {[main, extra].filter(Boolean).map((img) => (
         // eslint-disable-next-line @next/next/no-img-element -- small static photos
         <img
@@ -21,8 +22,8 @@ function Visual({ award }: { award: AwardMeta }) {
           alt={img!.alt}
           loading="lazy"
           width={1170}
-          height={775}
-          className="aspect-[3/2] size-full rounded-xl border border-[var(--color-border)] object-cover"
+          height={878}
+          className="aspect-[4/3] size-full rounded-xl border border-[var(--color-border)] object-cover"
         />
       ))}
     </div>
