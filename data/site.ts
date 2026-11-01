@@ -25,7 +25,7 @@ export const site = {
     description:
       "David Oladipupo is a software engineer and technical cofounder in Regina, Canada, building AI products end to end, including the Synvora iOS app and Pickup voice agent.",
     /** ISO date of the last meaningful content update; feeds the sitemap. Bump when you change the site's content. */
-    updated: "2026-10-13",
+    updated: "2026-11-01",
     /** Topics David can credibly be associated with (Person schema `knowsAbout`). Facts from the resume only. */
     knowsAbout: [
       "AI engineering",
@@ -137,5 +137,6 @@ export const marqueeItems = [
   "Supabase",
   "Python",
   "Agent orchestration",
+  "Hackathon winner",
   "Open to SWE + AI roles",
 ];

@@ -1,5 +1,5 @@
 import { site } from "@/data/site";
-import type { ProjectMeta } from "@/lib/content";
+import { getAwards, type ProjectMeta } from "@/lib/content";
 
 /** Absolute URL on the canonical domain. */
 export const abs = (path = "/") => {
@@ -34,6 +34,7 @@ const person = {
   email: site.email,
   address: { "@type": "PostalAddress", addressLocality: site.seo.city, addressRegion: site.seo.region, addressCountry: site.seo.country },
   knowsAbout: site.seo.knowsAbout,
+  award: getAwards().map((a) => `${a.result}, ${a.title}`),
   sameAs: [site.links.github, site.links.linkedin],
   worksFor: [{ "@id": ids.synvora }, { "@id": ids.pickup }],
   affiliation: { "@type": "EducationalOrganization", name: site.seo.university },

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Reveal } from "@/components/motion/Reveal";
 import { JsonLd } from "@/components/JsonLd";
 import { aboutGraph, breadcrumbs } from "@/lib/seo";
+import { Awards } from "@/components/Awards";
+import { getAwards } from "@/lib/content";
 import { skillGroups } from "@/data/skills";
 import { site } from "@/data/site";
 
@@ -24,6 +26,7 @@ const stats = [
 ];
 
 export default function AboutPage() {
+  const awards = getAwards();
   return (
     <div className="mx-auto max-w-[90rem] px-5 pb-24 pt-32 sm:px-8">
       <JsonLd data={aboutGraph} />
@@ -102,6 +105,20 @@ export default function AboutPage() {
               ))}
             </dl>
           </Reveal>
+
+          {awards.length > 0 && (
+            <section>
+              <Reveal>
+                <p className={label}>
+                  <span className="text-[var(--color-accent)]">&gt;</span> wins.log
+                </p>
+                <h2 className="mt-3 max-w-2xl font-serif text-4xl leading-tight sm:text-5xl">Hackathons &amp; competitions</h2>
+              </Reveal>
+              <div className="mt-8">
+                <Awards awards={awards} />
+              </div>
+            </section>
+          )}
 
           <section>
             <Reveal>

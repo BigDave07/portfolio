@@ -1,4 +1,4 @@
-import { getProject, getProjects } from "@/lib/content";
+import { getAwards, getProject, getProjects } from "@/lib/content";
 import { abs } from "@/lib/seo";
 import { skillGroups } from "@/data/skills";
 import { site } from "@/data/site";
@@ -19,6 +19,9 @@ export function GET() {
       return `### ${p.title} (${p.year}, ${p.category})\nURL: ${abs(`/work/${p.slug}`)}${p.live ? `\nLive site: ${p.live}` : ""}\nStack: ${p.stack.join(", ")}\nResult: ${p.metric}\n\n${p.summary}\n\n${plain(body)}`;
     })
     .join("\n\n");
+  const awards = getAwards()
+    .map((a) => `### ${a.title} (${a.date}, ${a.host}): ${a.result}\n${a.team ? `Team: ${a.team}\n` : ""}${a.idea ? `Idea pitched: ${a.idea}\n` : ""}\n${a.summary}\n\n${plain(a.body)}`)
+    .join("\n\n");
   const skills = skillGroups.map((g) => `- ${g.title}: ${g.items.join(", ")}`).join("\n");
 
   const text = `# ${site.fullName}: full site text
@@ -38,6 +41,10 @@ ${experience}
 ## Projects
 
 ${projects}
+
+## Hackathons and competitions
+
+${awards}
 
 ## Skills
 

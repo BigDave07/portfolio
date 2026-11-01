@@ -9,7 +9,7 @@ import {
 import { site } from "@/data/site";
 import { skillGroups } from "@/data/skills";
 import { anthropic } from "@ai-sdk/anthropic";
-import { getProject, getProjects } from "@/lib/content";
+import { getAwards, getProject, getProjects } from "@/lib/content";
 import { agentTools, capabilities } from "@/lib/agent/tools";
 
 export const maxDuration = 30;
@@ -55,6 +55,9 @@ ${links}
 ${plain(body)}`;
     })
     .join("\n\n");
+  const awards = getAwards()
+    .map((a) => `### ${a.title} (${a.date}, ${a.host}): ${a.result}${a.team ? `, team name ${a.team}` : ""}${a.idea ? `, pitched idea: ${a.idea}` : ""}\n${a.summary}\n${plain(a.body)}`)
+    .join("\n\n");
   const skills = skillGroups.map((g) => `- ${g.title}: ${g.items.join(", ")}`).join("\n");
   const experience = site.experience
     .map((e) => `- ${e.role}, ${e.org} (${e.when}):\n${e.points.map((pt) => `  - ${pt}`).join("\n")}`)
@@ -75,6 +78,9 @@ ${experience}
 
 # Projects (full case studies)
 ${projects}
+
+# Hackathons and competitions I've won
+${awards}
 
 # Skills
 ${skills}

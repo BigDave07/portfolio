@@ -2,7 +2,7 @@
 export const skillGroups: { title: string; items: string[] }[] = [
   {
     title: "Languages",
-    items: ["Python", "TypeScript", "JavaScript", "C++", "SQL", "HTML / CSS"],
+    items: ["Python", "TypeScript", "JavaScript", "PHP", "C++", "SQL", "HTML / CSS"],
   },
   {
     title: "AI / LLM",
@@ -21,7 +21,7 @@ export const skillGroups: { title: string; items: string[] }[] = [
   },
   {
     title: "Backend & Data",
-    items: ["Supabase (Postgres, Edge Functions, Auth)", "FastAPI", "Twilio", "REST APIs", "PostHog"],
+    items: ["Supabase (Postgres, Edge Functions, Auth)", "MySQL", "FastAPI", "Twilio", "REST APIs", "PostHog"],
   },
   {
     title: "Frontend & Mobile",

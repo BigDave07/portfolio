@@ -1,4 +1,4 @@
-import { getProjects } from "@/lib/content";
+import { getAwards, getProjects } from "@/lib/content";
 import { abs } from "@/lib/seo";
 import { site } from "@/data/site";
 
@@ -7,6 +7,7 @@ export const dynamic = "force-static";
 /** llms.txt: a short, plain-text map of the site for AI assistants (https://llmstxt.org). */
 export function GET() {
   const projects = getProjects();
+  const awards = getAwards();
   const body = `# ${site.fullName}
 
 > ${site.seo.description}
@@ -22,6 +23,10 @@ ${site.fullName} is based in ${site.seo.city}, ${site.seo.region}, Canada and is
 ## Projects
 
 ${projects.map((p) => `- [${p.title}](${abs(`/work/${p.slug}`)}): ${p.summary}`).join("\n")}
+
+## Hackathons and competitions
+
+${awards.map((a) => `- ${a.title} (${a.date}): ${a.result}. ${a.summary}`).join("\n")}
 
 ## Elsewhere
 

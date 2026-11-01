@@ -6,12 +6,14 @@ import { ProjectList } from "@/components/ProjectList";
 import { SkillGroup } from "@/components/SkillGroup";
 import { Marquee } from "@/components/Marquee";
 import { Reveal } from "@/components/motion/Reveal";
-import { getFeaturedProjects } from "@/lib/content";
+import { Awards } from "@/components/Awards";
+import { getAwards, getFeaturedProjects } from "@/lib/content";
 import { skillGroups } from "@/data/skills";
 import { site, marqueeItems } from "@/data/site";
 
 export default function Home() {
   const projects = getFeaturedProjects();
+  const awards = getAwards();
 
   return (
     <>
@@ -35,7 +37,13 @@ export default function Home() {
         </Reveal>
       </Section>
 
-      <Section id="about" index="03" eyebrow="About.log" title="Building AI products, end to end">
+      {awards.length > 0 && (
+        <Section id="wins" index="03" eyebrow="Wins.log" title="Hackathons & competitions">
+          <Awards awards={awards} />
+        </Section>
+      )}
+
+      <Section id="about" index={awards.length > 0 ? "04" : "03"} eyebrow="About.log" title="Building AI products, end to end">
         <div className="max-w-2xl space-y-5 text-lg leading-8 text-[var(--color-muted)] text-pretty">
           {site.bio.map((para) => (
             <Reveal key={para.slice(0, 24)}>
@@ -54,7 +62,7 @@ export default function Home() {
         </div>
       </Section>
 
-      <Section id="skills" index="04" eyebrow="Stack.sys" title="What I work with">
+      <Section id="skills" index={awards.length > 0 ? "05" : "04"} eyebrow="Stack.sys" title="What I work with">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {skillGroups.map((group, i) => (
             <Reveal key={group.title} delay={i * 0.05}>
