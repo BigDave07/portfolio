@@ -15,7 +15,9 @@ export const skillGroups: { title: string; items: string[] }[] = [
       "Agent orchestration",
       "Vision-language models",
       "RAG",
+      "LLM evaluation",
       "Evaluation sets",
+      "Model routing",
       "MCP",
     ],
   },
@@ -30,6 +32,17 @@ export const skillGroups: { title: string; items: string[] }[] = [
   {
     title: "ML",
     items: ["PyTorch / TensorFlow fundamentals", "scikit-learn", "pandas", "NumPy", "YOLOv8", "Tableau", "Power BI"],
+  },
+  {
+    title: "Product delivery",
+    items: [
+      "System design & architecture",
+      "API integration",
+      "Authentication & authorization",
+      "Multi-tenant architecture",
+      "Technical discovery",
+      "Testing strategy",
+    ],
   },
   {
     title: "Tooling",
