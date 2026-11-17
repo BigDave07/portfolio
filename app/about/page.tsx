@@ -10,7 +10,7 @@ import { site } from "@/data/site";
 export const metadata: Metadata = {
   title: { absolute: "About David Oladipupo | Software Engineer in Regina, SK" },
   description:
-    "About David Oladipupo: software engineer and technical cofounder of Synvora and founder of Pickup, finishing Software Engineering at the University of Regina in December 2026, with internships at Autodesk and Farm Credit Canada.",
+    "About David Oladipupo: software engineer and technical cofounder of Synvora and founder of Pickup, finishing Computer Science at the University of Regina in December 2026, with software engineering internships at Pinterest, Google and Farm Credit Canada.",
   alternates: { canonical: "/about" },
   openGraph: { url: "/about", type: "profile", title: "About David Oladipupo", description: site.seo.description },
 };
@@ -22,7 +22,7 @@ const stats = [
   { value: "39+", label: "screens in the Synvora iOS app, shipped solo" },
   { value: "<4 mo", label: "from empty repo to App Store launch" },
   { value: "30+", label: "customer discovery calls for Pickup" },
-  { value: "2", label: "internships: AI at Autodesk, software engineering at Farm Credit Canada" },
+  { value: "3", label: "software engineering internships: Pinterest, Google and Farm Credit Canada" },
 ];
 
 export default function AboutPage() {
@@ -82,10 +82,10 @@ export default function AboutPage() {
               {[
                 ["Who", `${site.fullName}, ${site.role.toLowerCase()} and technical cofounder`],
                 ["Based in", `${site.seo.city}, ${site.seo.region}, Canada (open to relocation)`],
-                ["Founded", "Synvora (AI skincare app) and Pickup (AI voice intake agent)"],
+                ["Founded", "Synvora (AI skincare app, cofounder) and Pickup (AI voice intake agent)"],
                 ["Builds with", "TypeScript, Python, React Native, Next.js, Supabase and the Claude API"],
-                ["Studying", `Software Engineering, ${site.seo.university}, graduating December 2026`],
-                ["Experience", "Internships at Autodesk (AI) and Farm Credit Canada (software engineering)"],
+                ["Studying", `Computer Science, ${site.seo.university}, graduating December 2026`],
+                ["Experience", "Software engineering internships at Pinterest, Google and Farm Credit Canada"],
                 ["Looking for", "Software engineering and AI engineering roles"],
               ].map(([k, v]) => (
                 <div key={k} className="contents">
