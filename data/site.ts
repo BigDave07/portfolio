@@ -16,7 +16,7 @@ export const site = {
     eyebrow: "Open to SWE / AI engineering roles",
     headline: ["Hi, I'm David.", "I build AI products."],
     subtext:
-      "Technical cofounder of Synvora and founder of Pickup. I take AI products from customer discovery to production. Software Engineering at the University of Regina, Dec 2026.",
+      "Technical cofounder of Synvora and founder of Pickup. I take AI products from customer discovery to production. Computer Science at the University of Regina, Dec 2026.",
   },
 
   /** Search / social metadata. Titles stay under ~60 chars, descriptions under ~160. */
@@ -25,7 +25,7 @@ export const site = {
     description:
       "David Oladipupo is a software engineer and technical cofounder in Regina, Canada, building AI products end to end, including the Synvora iOS app and Pickup voice agent.",
     /** ISO date of the last meaningful content update; feeds the sitemap. Bump when you change the site's content. */
-    updated: "2026-11-01",
+    updated: "2026-11-16",
     /** Topics David can credibly be associated with (Person schema `knowsAbout`). Facts from the resume only. */
     knowsAbout: [
       "AI engineering",
@@ -56,7 +56,7 @@ export const site = {
     now: [
       { label: "Building", value: "Pickup, an AI voice intake agent" },
       { label: "Shipped", value: "Synvora, live on the App Store" },
-      { label: "Studying", value: "Software Engineering, U of Regina, Dec 2026" },
+      { label: "Studying", value: "Computer Science, U of Regina, Dec 2026" },
       { label: "Open to", value: "SWE + AI engineering roles" },
     ],
   },
@@ -71,14 +71,26 @@ export const site = {
   /** 2-3 sentence bio for the About section. */
   bio: [
     "I'm a software engineer and technical cofounder who ships production systems end to end. At Synvora I built the whole product solo: a 39+ screen React Native iOS app, a Next.js site, and a multi-stage Claude backend on Supabase Edge Functions, from empty repo to the App Store in under four months.",
-    "I'm also building Pickup, a multi-tenant AI receptionist for law firms and local businesses, validated through 30+ customer discovery calls. I've interned as an AI software intern at Autodesk (2024) and as a software engineer intern at Farm Credit Canada (2025 to 2026). I'm finishing my Software Engineering degree at the University of Regina (December 2026) and I'm open to SWE and AI engineering roles.",
+    "I'm also building Pickup, a multi-tenant AI receptionist for law firms and local businesses, validated through 30+ customer discovery calls. I've interned as a software engineer at Pinterest (2024), Google (2025) and Farm Credit Canada (2025 to 2026). I'm finishing my Computer Science degree at the University of Regina (December 2026) and I'm open to SWE and AI engineering roles.",
   ],
 
   /** Work history, used by the AI agent (and anywhere else that needs it). Newest first; from the Nov 2026 resume. */
   experience: [
     {
+      role: "Cofounder & Technical Lead",
+      org: "Synvora, Regina",
+      when: "July 2026 - present",
+      points: [
+        "Built and shipped the full product solo as the technical cofounder: a React Native (Expo, TypeScript) iOS app of 39+ screens, a Next.js marketing site, and a Supabase backend, from empty repo to App Store launch in under four months.",
+        "Designed a multi-stage LLM backend on Supabase Edge Functions: a three-angle vision scan, a cached verdict layer, a routine assembler, a safety gate, and a conversational coach with memory of prior scans and onboarding answers.",
+        "Cut inference cost by routing by task (Claude Sonnet for vision analysis and product verdicts, Haiku for chat) and caching verdicts against a curated product database rather than re-querying per user.",
+        "Constrained model output to visible-trait observations rather than diagnosis, a product-safety requirement that shaped the prompt contract and the App Store health-content rating.",
+        "Built the product database to 108 curated Canada-available SKUs with engine metadata (fragrance-free flags, ingredient conflicts, pregnancy cautions), merging and cleaning source data from Open Beauty Facts and enriching it via the Claude API.",
+      ],
+    },
+    {
       role: "Founder",
-      org: "Pickup and Synvora",
+      org: "Pickup",
       when: "May 2026 - present",
       points: [
         "Pickup (AI voice intake agent): conducted 30+ customer discovery calls across Regina, Saskatoon, Winnipeg, Calgary and Edmonton to validate intake failures in local firms.",
@@ -87,32 +99,38 @@ export const site = {
         "Architected the missed-call recovery MVP on Twilio, the Claude API, Supabase and a Next.js dashboard.",
         "Run direct outreach to target firms and handle technical pre-sales conversations with non-technical business owners.",
         "Position Pickup as a multi-tenant AI receptionist for law firms and local service businesses through trypickup.dev.",
-        "Synvora (skincare analysis app): delivered a consumer iOS app from an empty repo to App Store launch, then built backend systems with LLM routing, caching and safety controls.",
       ],
     },
     {
       role: "Software Engineer Intern",
-      org: "Farm Credit Canada (FCC), Regina",
-      when: "Aug 2025 - Oct 2026",
+      org: "Farm Credit Canada, Regina",
+      when: "Oct 2025 - Apr 2026",
       points: [
-        "Built backend features for internal tools using Python and TypeScript in a collaborative development environment.",
-        "Developed REST API endpoints to support data exchange between internal systems and user-facing applications.",
+        "Built backend features for internal tools in Python and TypeScript in a collaborative development environment.",
+        "Developed REST API endpoints supporting data exchange between internal systems and user-facing applications.",
         "Tested application changes and reported defects before release to improve stability and usability.",
         "Supported technical discovery by gathering requirements and clarifying feature scope with teammates.",
         "Implemented data queries and validation checks to improve reliability across internal reporting workflows.",
       ],
     },
     {
-      role: "AI Software Intern",
-      org: "Autodesk, Toronto",
+      role: "Software Engineer Intern",
+      org: "Google, Toronto",
+      when: "May 2025 - Sept 2025",
+      points: [
+        "Developed and maintained backend services for Google Cloud infrastructure.",
+        "Designed scalable APIs and improved system performance.",
+        "Collaborated with cross-functional teams to ship high-impact features.",
+      ],
+    },
+    {
+      role: "Software Engineer Intern",
+      org: "Pinterest, Toronto",
       when: "May 2024 - Sept 2024",
       points: [
-        "Developed retrieval-augmented generation flows to ground responses in relevant internal content.",
-        "Built API integrations to connect model outputs with downstream product and workflow systems.",
-        "Designed LLM evaluation sets to compare response quality across common user scenarios.",
-        "Implemented agent orchestration patterns to coordinate tool use and structured response handling.",
-        "Reviewed model failures and updated guardrails for safer, more consistent responses.",
-        "Refined SQL queries to support data checks, analysis and experiment review.",
+        "Executed scoped technical tasks end to end, contributing to Pinterest products and infrastructure.",
+        "Delivered code that was documented, tested and operable in production.",
+        "Collaborated with the team on production-oriented projects supporting company goals.",
       ],
     },
     {
@@ -132,13 +150,13 @@ export const site = {
     },
   ],
   education:
-    "Bachelor of Science, Software Engineering, University of Regina, expected December 2026. Coursework: Data Structures, Algorithms, Software Engineering, Machine Learning, Embedded Systems (Arduino).",
+    "Computer Science, University of Regina, expected December 2026. Coursework: Data Structures, Algorithms, Software Engineering, Machine Learning, Embedded Systems (Arduino).",
   certifications:
-    "IBM Machine Learning Professional Certificate, IBM Python for Data Science, and IBM RAG and Agentic AI Professional Certificate.",
+    "IBM Machine Learning Professional Certificate (supervised and unsupervised learning, deep learning, reinforcement learning), IBM Python for Data Science and IBM SQL, 7 IBM certificates in total. In progress: IBM RAG and Agentic AI Professional Certificate.",
 
   links: {
     github: "https://github.com/BigDave07",
-    linkedin: "https://www.linkedin.com/in/david-oladipupo",
+    linkedin: "https://www.linkedin.com/in/david-oladipupo-088668326",
     email: "mailto:daveed3k3k@gmail.com",
   },
 } as const;
